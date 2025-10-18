@@ -26,7 +26,7 @@
         "psr/log": "^3.0"
     },
     "require-dev": {
-        "maduser/argon": "dev-test",
+        "maduser/argon": "dev-master",
         "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
         "phpunit/phpunit": "^9.6",
         "slevomat/coding-standard": "^8.16",

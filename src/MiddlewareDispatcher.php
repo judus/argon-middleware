@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Maduser\Argon\Middleware;
 
-use Maduser\Argon\Http\Exception\EmptyMiddlewareChainException;
+use Maduser\Argon\Middleware\Exception\EmptyMiddlewareChainException;
 use Maduser\Argon\Middleware\Contracts\MiddlewareResolverInterface;
 use Maduser\Argon\Middleware\Exception\MiddlewareException;
 use Psr\Http\Message\ServerRequestInterface;

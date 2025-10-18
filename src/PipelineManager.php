@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Maduser\Argon\Middleware;
 
-use Maduser\Argon\Contracts\MiddlewareStackInterface;
+use Maduser\Argon\Middleware\Contracts\MiddlewareStackInterface;
 use Maduser\Argon\Middleware\Contracts\PipelineManagerInterface;
 use Maduser\Argon\Middleware\Contracts\PipelineStoreInterface;
 use Maduser\Argon\Middleware\Store\InMemoryStore;

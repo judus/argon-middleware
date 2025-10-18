@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Maduser\Argon\Middleware;
 
-use Maduser\Argon\Contracts\MiddlewareStackInterface;
+use Maduser\Argon\Middleware\Contracts\MiddlewareStackInterface;
 
 final readonly class MiddlewareStack implements MiddlewareStackInterface
 {

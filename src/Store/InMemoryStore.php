@@ -3,7 +3,7 @@
 namespace Maduser\Argon\Middleware\Store;
 
 use Maduser\Argon\Container\ArgonContainer;
-use Maduser\Argon\Contracts\MiddlewareStackInterface;
+use Maduser\Argon\Middleware\Contracts\MiddlewareStackInterface;
 use Maduser\Argon\Middleware\Contracts\PipelineStoreInterface;
 use Maduser\Argon\Middleware\MiddlewarePipeline;
 use Maduser\Argon\Middleware\MiddlewareStack;
