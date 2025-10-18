@@ -112,7 +112,13 @@ final class MiddlewarePipelineBuilder
             $instances[] = $instance;
         }
 
-        return new MiddlewarePipeline($instances, $this->logger, $finalHandler, $this->verbosity);
+        return new MiddlewarePipeline(
+            middleware: $instances,
+            resolver: $this->resolver,
+            logger: $this->logger,
+            finalHandler: $finalHandler,
+            verbosity: $this->verbosity
+        );
     }
 
     private function resolveAlias(string $name): string

@@ -42,6 +42,10 @@ final readonly class TaggedMiddlewareLoader implements MiddlewareLoaderInterface
      */
     public function loadGrouped(): array
     {
+        if ($this->tag === null) {
+            throw new MiddlewareException('No tag provided for loading middleware.');
+        }
+
         $tagged = $this->container->getTaggedMeta($this->tag);
         $groups = [];
 
