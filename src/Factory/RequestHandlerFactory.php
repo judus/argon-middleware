@@ -15,6 +15,7 @@ use Maduser\Argon\Middleware\MiddlewarePipelineBuilder;
 use Maduser\Argon\Routing\Contracts\RequestHandlerResolverInterface;
 use Maduser\Argon\Routing\Contracts\RouteContextInterface;
 use Maduser\Argon\Routing\RequestHandlerResolver;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -83,6 +84,23 @@ final readonly class RequestHandlerFactory
 
     public function createFromRouteContext(?ServerRequestInterface $request = null): RequestHandlerInterface
     {
-        return $this->requestHandlerResolver->resolve($request);
+        $resolver = $this->requestHandlerResolver;
+        return new class($resolver) implements RequestHandlerInterface {
+            public function __construct(
+                private RequestHandlerResolverInterface $resolver
+            ) {
+            }
+
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                $handler = $this->resolver->resolve($request);
+
+                if (method_exists($handler, 'setRequest')) {
+                    $handler->setRequest($request);
+                }
+
+                return $handler->handle($request);
+            }
+        };
     }
 }

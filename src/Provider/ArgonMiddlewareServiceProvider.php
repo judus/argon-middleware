@@ -63,6 +63,6 @@ class ArgonMiddlewareServiceProvider extends AbstractServiceProvider
 
         $container->set(RequestHandlerInterface::class, MiddlewarePipeline::class)
             ->factory(RequestHandlerFactoryInterface::class, 'createFromRouteContext')
-            ->tag([Tag::MIDDLEWARE_HTTP, Tag::PSR15]);
+            ->tag([Tag::PSR15]);
     }
 }

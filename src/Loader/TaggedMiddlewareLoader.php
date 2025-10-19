@@ -30,7 +30,7 @@ final readonly class TaggedMiddlewareLoader implements MiddlewareLoaderInterface
 
         $definitions = [];
         foreach ($tagged as $class => $meta) {
-            $priority = (int) $meta['priority'];
+            $priority = isset($meta['priority']) ? (int) $meta['priority'] : 0;
             $definitions[] = new MiddlewareDefinition($class, $priority);
         }
 
@@ -50,11 +50,23 @@ final readonly class TaggedMiddlewareLoader implements MiddlewareLoaderInterface
         $groups = [];
 
         foreach ($tagged as $class => $meta) {
-            $priority = (int) $meta['priority'];
-            $group = (string) ($meta['group'] ?? MiddlewareDefinition::DEFAULT_GROUP);
+            $priority = isset($meta['priority']) ? (int) $meta['priority'] : 0;
+            $groupMeta = $meta['group'] ?? MiddlewareDefinition::DEFAULT_GROUP;
+            $groupNames = is_array($groupMeta) ? $groupMeta : [$groupMeta];
+
+            if ($groupNames === []) {
+                $groupNames = [MiddlewareDefinition::DEFAULT_GROUP];
+            }
+
             $definition = new MiddlewareDefinition($class, $priority);
 
-            $groups[$group][] = $definition;
+            foreach ($groupNames as $name) {
+                $group = $name !== null && $name !== ''
+                    ? (string) $name
+                    : MiddlewareDefinition::DEFAULT_GROUP;
+
+                $groups[$group][] = $definition;
+            }
         }
 
         return $groups;
