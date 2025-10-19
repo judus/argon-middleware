@@ -12,6 +12,7 @@ use Maduser\Argon\Middleware\Factory\RequestHandlerFactory;
 use Maduser\Argon\Middleware\Contracts\MiddlewareLoaderInterface;
 use Maduser\Argon\Middleware\Contracts\MiddlewarePipelineCacheInterface;
 use Maduser\Argon\Middleware\Contracts\MiddlewareResolverInterface;
+use Maduser\Argon\Middleware\Contracts\PipelineManagerInterface;
 use Maduser\Argon\Middleware\Contracts\PipelineStoreInterface;
 use Maduser\Argon\Middleware\Loader\TaggedMiddlewareLoader;
 use Maduser\Argon\Middleware\MiddlewarePipeline;
@@ -30,13 +31,20 @@ class ArgonMiddlewareServiceProvider extends AbstractServiceProvider
     public function register(ArgonContainer $container): void
     {
         $container->set(PipelineManager::class, args: [
-            'store' => ContainerStore::class
+            'store' => PipelineStoreInterface::class
         ]);
+
+        $container->set(PipelineManagerInterface::class, PipelineManager::class, [
+            'store' => PipelineStoreInterface::class,
+        ])
+            ->tag(['middleware.manager']);
 
         $container->set(PipelineStoreInterface::class, ContainerStore::class)
             ->tag(['middleware.store']);
 
-        $container->set(MiddlewareLoaderInterface::class, TaggedMiddlewareLoader::class)
+        $container->set(MiddlewareLoaderInterface::class, TaggedMiddlewareLoader::class, [
+            'tag' => Tag::MIDDLEWARE_HTTP,
+        ])
             ->tag(['middleware.loader']);
 
         $container->set(MiddlewarePipelineCacheInterface::class, MiddlewarePipelineCache::class)
