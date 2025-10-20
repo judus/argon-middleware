@@ -10,20 +10,15 @@ use Maduser\Argon\Middleware\PipelineManager;
 use Maduser\Argon\Middleware\Store\ContainerStore;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 use Tests\Integration\Fixtures\CollectingLogger;
 use Tests\Integration\Fixtures\LogCollector;
 use Tests\Integration\Fixtures\RecordingMiddleware;
-use Tests\Integration\Fixtures\RouteContextStub;
-use Tests\Integration\Fixtures\RouteStub;
-use Tests\Integration\Fixtures\SettableRequestHandler;
 use Tests\Integration\Fixtures\TerminalMiddleware;
 use Tests\Unit\Fixtures\ResponseStub;
 use Maduser\Argon\Middleware\Factory\RequestHandlerFactory;
 use Maduser\Argon\Middleware\Loader\StaticMiddlewareLoader;
 use Maduser\Argon\Middleware\MiddlewareDefinition;
 use Maduser\Argon\Middleware\Resolver\StaticMiddlewareResolver;
-use Maduser\Argon\Routing\Contracts\RequestHandlerResolverInterface;
 
 final class ContainerStoreIntegrationTest extends TestCase
 {
@@ -37,23 +32,8 @@ final class ContainerStoreIntegrationTest extends TestCase
             TerminalMiddleware::class => new TerminalMiddleware($collector, 'store-terminal', $response),
         ]);
 
-        $requestHandler = new SettableRequestHandler();
-        $handlerResolver = new class($requestHandler) implements RequestHandlerResolverInterface
-        {
-            public function __construct(private readonly SettableRequestHandler $handler)
-            {
-            }
-
-            public function resolve(?ServerRequestInterface $request = null): RequestHandlerInterface
-            {
-                return $this->handler;
-            }
-        };
-
         $factory = new RequestHandlerFactory(
             resolver: $resolver,
-            requestHandlerResolver: $handlerResolver,
-            context: new RouteContextStub(new RouteStub()),
             logger: new CollectingLogger(),
             loader: new StaticMiddlewareLoader([
                 MiddlewareDefinition::DEFAULT_GROUP => [
@@ -91,24 +71,8 @@ final class ContainerStoreIntegrationTest extends TestCase
             TerminalMiddleware::class => new TerminalMiddleware($collector, 'manager-terminal', $response),
         ]);
 
-        $handlerResolver = new class implements RequestHandlerResolverInterface
-        {
-            public function resolve(?ServerRequestInterface $request = null): RequestHandlerInterface
-            {
-                return new class implements RequestHandlerInterface
-                {
-                    public function handle(ServerRequestInterface $request): ResponseStub
-                    {
-                        return new ResponseStub();
-                    }
-                };
-            }
-        };
-
         $factory = new RequestHandlerFactory(
             resolver: $resolver,
-            requestHandlerResolver: $handlerResolver,
-            context: new RouteContextStub(new RouteStub()),
             logger: new CollectingLogger(),
             loader: new StaticMiddlewareLoader([])
         );

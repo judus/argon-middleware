@@ -8,8 +8,6 @@ use InvalidArgumentException;
 use Maduser\Argon\Middleware\Contracts\MiddlewareLoaderInterface;
 use Maduser\Argon\Middleware\Contracts\MiddlewareResolverInterface;
 use Maduser\Argon\Middleware\Factory\RequestHandlerFactory;
-use Maduser\Argon\Routing\Contracts\RequestHandlerResolverInterface;
-use Maduser\Argon\Routing\Contracts\RouteContextInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -19,8 +17,6 @@ final class RequestHandlerFactoryTest extends TestCase
     {
         $factory = new RequestHandlerFactory(
             resolver: $this->createMock(MiddlewareResolverInterface::class),
-            requestHandlerResolver: $this->createMock(RequestHandlerResolverInterface::class),
-            context: $this->createMock(RouteContextInterface::class),
             logger: $this->createMock(LoggerInterface::class),
             loader: $this->createMock(MiddlewareLoaderInterface::class)
         );

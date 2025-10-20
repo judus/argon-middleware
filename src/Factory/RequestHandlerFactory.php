@@ -6,27 +6,20 @@ namespace Maduser\Argon\Middleware\Factory;
 
 use InvalidArgumentException;
 use Maduser\Argon\Middleware\Contracts\MiddlewareLoaderInterface;
-use Maduser\Argon\Middleware\Contracts\MiddlewarePipelineCacheInterface;
 use Maduser\Argon\Middleware\Contracts\MiddlewareResolverInterface;
 use Maduser\Argon\Middleware\Contracts\PipelineManagerInterface;
+use Maduser\Argon\Middleware\Contracts\RequestHandlerFactoryInterface;
 use Maduser\Argon\Middleware\MiddlewareDefinition;
 use Maduser\Argon\Middleware\MiddlewarePipeline;
 use Maduser\Argon\Middleware\MiddlewarePipelineBuilder;
-use Maduser\Argon\Routing\Contracts\RequestHandlerResolverInterface;
-use Maduser\Argon\Routing\Contracts\RouteContextInterface;
-use Maduser\Argon\Routing\RequestHandlerResolver;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 
-final readonly class RequestHandlerFactory
+final readonly class RequestHandlerFactory implements RequestHandlerFactoryInterface
 {
     public function __construct(
         private MiddlewareResolverInterface $resolver,
-        private RequestHandlerResolverInterface $requestHandlerResolver,
-        private RouteContextInterface $context,
         private LoggerInterface $logger,
         private MiddlewareLoaderInterface $loader,
         private ?PipelineManagerInterface $pipelines = null
@@ -46,7 +39,7 @@ final readonly class RequestHandlerFactory
         $groups = $this->loader->loadGrouped();
         foreach ($groups as $groupName => $definitions) {
             foreach ($definitions as $definition) {
-                $builder->registerAlias($definition->class, $definition->class);
+                $builder->registerAlias($definition->class, $definition->class, overwrite: true);
             }
             if ($groupName === MiddlewareDefinition::DEFAULT_GROUP) {
                 foreach ($definitions as $definition) {
@@ -80,27 +73,5 @@ final readonly class RequestHandlerFactory
             resolver: $this->resolver,
             logger: $this->logger
         );
-    }
-
-    public function createFromRouteContext(?ServerRequestInterface $request = null): RequestHandlerInterface
-    {
-        $resolver = $this->requestHandlerResolver;
-        return new class($resolver) implements RequestHandlerInterface {
-            public function __construct(
-                private RequestHandlerResolverInterface $resolver
-            ) {
-            }
-
-            public function handle(ServerRequestInterface $request): ResponseInterface
-            {
-                $handler = $this->resolver->resolve($request);
-
-                if (method_exists($handler, 'setRequest')) {
-                    $handler->setRequest($request);
-                }
-
-                return $handler->handle($request);
-            }
-        };
     }
 }

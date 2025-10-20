@@ -4,21 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Integration;
 
-use InvalidArgumentException;
 use Maduser\Argon\Middleware\Factory\RequestHandlerFactory;
 use Maduser\Argon\Middleware\Loader\StaticMiddlewareLoader;
 use Maduser\Argon\Middleware\MiddlewareDefinition;
 use Maduser\Argon\Middleware\Resolver\StaticMiddlewareResolver;
-use Maduser\Argon\Routing\Contracts\RequestHandlerResolverInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Tests\Integration\Fixtures\CollectingLogger;
 use Tests\Integration\Fixtures\LogCollector;
 use Tests\Integration\Fixtures\RecordingMiddleware;
-use Tests\Integration\Fixtures\RouteContextStub;
-use Tests\Integration\Fixtures\RouteStub;
-use Tests\Integration\Fixtures\SettableRequestHandler;
 use Tests\Integration\Fixtures\TerminalMiddleware;
 use Tests\Unit\Fixtures\ResponseStub;
 
@@ -45,23 +40,8 @@ final class RequestHandlerFactoryIntegrationTest extends TestCase
 
         $logger = new CollectingLogger();
 
-        $handler = new SettableRequestHandler();
-        $requestResolver = new class($handler) implements RequestHandlerResolverInterface
-        {
-            public function __construct(private readonly SettableRequestHandler $handler)
-            {
-            }
-
-            public function resolve(?ServerRequestInterface $request = null): RequestHandlerInterface
-            {
-                return $this->handler;
-            }
-        };
-
         $factory = new RequestHandlerFactory(
             resolver: $resolver,
-            requestHandlerResolver: $requestResolver,
-            context: new RouteContextStub(new RouteStub()),
             logger: $logger,
             loader: $loader
         );
@@ -80,17 +60,6 @@ final class RequestHandlerFactoryIntegrationTest extends TestCase
         $handler = $this->createMock(RequestHandlerInterface::class);
 
         $resolver = new StaticMiddlewareResolver([]);
-        $requestResolver = new class($handler) implements RequestHandlerResolverInterface
-        {
-            public function __construct(private readonly RequestHandlerInterface $handler)
-            {
-            }
-
-            public function resolve(?ServerRequestInterface $request = null): RequestHandlerInterface
-            {
-                return $this->handler;
-            }
-        };
 
         $pipelineManager = new class($handler) implements \Maduser\Argon\Middleware\Contracts\PipelineManagerInterface
         {
@@ -111,8 +80,6 @@ final class RequestHandlerFactoryIntegrationTest extends TestCase
 
         $factory = new RequestHandlerFactory(
             resolver: $resolver,
-            requestHandlerResolver: $requestResolver,
-            context: new RouteContextStub(new RouteStub()),
             logger: new CollectingLogger(),
             loader: new StaticMiddlewareLoader([]),
             pipelines: $pipelineManager
@@ -135,14 +102,6 @@ final class RequestHandlerFactoryIntegrationTest extends TestCase
 
         $factory = new RequestHandlerFactory(
             resolver: $resolver,
-            requestHandlerResolver: new class implements RequestHandlerResolverInterface
-            {
-                public function resolve(?ServerRequestInterface $request = null): RequestHandlerInterface
-                {
-                    throw new InvalidArgumentException('Not used in this scenario.');
-                }
-            },
-            context: new RouteContextStub(new RouteStub()),
             logger: new CollectingLogger(),
             loader: new StaticMiddlewareLoader([])
         );
@@ -162,37 +121,5 @@ final class RequestHandlerFactoryIntegrationTest extends TestCase
         );
     }
 
-    public function testCreateFromRouteContextResolvesRequestHandlerAndInjectsRequest(): void
-    {
-        $handler = new SettableRequestHandler();
-
-        $resolver = new StaticMiddlewareResolver([]);
-        $requestResolver = new class($handler) implements RequestHandlerResolverInterface
-        {
-            public function __construct(private readonly SettableRequestHandler $handler)
-            {
-            }
-
-            public function resolve(?ServerRequestInterface $request = null): RequestHandlerInterface
-            {
-                return $this->handler;
-            }
-        };
-
-        $factory = new RequestHandlerFactory(
-            resolver: $resolver,
-            requestHandlerResolver: $requestResolver,
-            context: new RouteContextStub(new RouteStub()),
-            logger: new CollectingLogger(),
-            loader: new StaticMiddlewareLoader([])
-        );
-
-        $request = $this->createMock(ServerRequestInterface::class);
-
-        $wrapper = $factory->createFromRouteContext($request);
-        $response = $wrapper->handle($request);
-
-        self::assertInstanceOf(ResponseStub::class, $response);
-        self::assertSame($request, $handler->lastRequest());
-    }
+    // createFromRouteContext removed; routing package now owns request-aware factories.
 }

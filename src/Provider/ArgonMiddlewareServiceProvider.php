@@ -7,24 +7,25 @@ namespace Maduser\Argon\Middleware\Provider;
 use Maduser\Argon\Container\AbstractServiceProvider;
 use Maduser\Argon\Container\ArgonContainer;
 use Maduser\Argon\Container\Exceptions\ContainerException;
-use Maduser\Argon\Contracts\Http\Server\Factory\RequestHandlerFactoryInterface;
 use Maduser\Argon\Middleware\Factory\RequestHandlerFactory;
 use Maduser\Argon\Middleware\Contracts\MiddlewareLoaderInterface;
 use Maduser\Argon\Middleware\Contracts\MiddlewarePipelineCacheInterface;
 use Maduser\Argon\Middleware\Contracts\MiddlewareResolverInterface;
 use Maduser\Argon\Middleware\Contracts\PipelineManagerInterface;
 use Maduser\Argon\Middleware\Contracts\PipelineStoreInterface;
+use Maduser\Argon\Middleware\Contracts\RequestHandlerFactoryInterface;
 use Maduser\Argon\Middleware\Loader\TaggedMiddlewareLoader;
 use Maduser\Argon\Middleware\MiddlewarePipeline;
 use Maduser\Argon\Middleware\MiddlewarePipelineCache;
 use Maduser\Argon\Middleware\PipelineManager;
 use Maduser\Argon\Middleware\Resolver\ContainerMiddlewareResolver;
 use Maduser\Argon\Middleware\Store\ContainerStore;
-use Maduser\Argon\Prophecy\Support\Tag;
 use Psr\Http\Server\RequestHandlerInterface;
 
 class ArgonMiddlewareServiceProvider extends AbstractServiceProvider
 {
+    private const DEFAULT_MIDDLEWARE_TAG = 'middleware.http';
+
     /**
      * @throws ContainerException
      */
@@ -43,7 +44,7 @@ class ArgonMiddlewareServiceProvider extends AbstractServiceProvider
             ->tag(['middleware.store']);
 
         $container->set(MiddlewareLoaderInterface::class, TaggedMiddlewareLoader::class, [
-            'tag' => Tag::MIDDLEWARE_HTTP,
+            'tag' => $container->getParameters()->get('middleware.tag', self::DEFAULT_MIDDLEWARE_TAG),
         ])
             ->tag(['middleware.loader']);
 
@@ -59,10 +60,10 @@ class ArgonMiddlewareServiceProvider extends AbstractServiceProvider
         $container->set(RequestHandlerFactory::class);
 
         $container->set(RequestHandlerFactoryInterface::class, RequestHandlerFactory::class)
-            ->tag([Tag::REQUEST_HANDLER_FACTORY]);
+            ->tag(['middleware.request_handler_factory']);
 
         $container->set(RequestHandlerInterface::class, MiddlewarePipeline::class)
-            ->factory(RequestHandlerFactoryInterface::class, 'createFromRouteContext')
-            ->tag([Tag::PSR15]);
+            ->factory(RequestHandlerFactoryInterface::class, 'create')
+            ->tag(['middleware.request_handler']);
     }
 }
