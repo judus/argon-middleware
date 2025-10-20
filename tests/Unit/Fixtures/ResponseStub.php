@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Mocks;
+namespace Tests\Unit\Fixtures;
 
 use BadMethodCallException;
 use Psr\Http\Message\ResponseInterface;

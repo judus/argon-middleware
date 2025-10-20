@@ -9,7 +9,7 @@ use Exception;
 use Maduser\Argon\Middleware\ResultContext;
 use PHPUnit\Framework\TestCase;
 use stdClass;
-use Tests\Mocks\ResponseStub;
+use Tests\Unit\Fixtures\ResponseStub;
 
 final class ResultContextTest extends TestCase
 {
