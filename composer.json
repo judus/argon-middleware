@@ -37,9 +37,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\Mocks\\": "tests/resources/mocks/",
-            "Tests\\Unit\\": "tests/unit/",
-            "Tests\\Integration\\": "tests/integration/"
+            "Tests\\": "tests/"
         }
     },
     "scripts": {
