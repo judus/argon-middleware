@@ -12,6 +12,7 @@ use Maduser\Argon\Middleware\Contracts\RequestHandlerFactoryInterface;
 use Maduser\Argon\Middleware\MiddlewareDefinition;
 use Maduser\Argon\Middleware\MiddlewarePipeline;
 use Maduser\Argon\Middleware\MiddlewarePipelineBuilder;
+use Override;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
@@ -26,6 +27,7 @@ final readonly class RequestHandlerFactory implements RequestHandlerFactoryInter
     ) {
     }
 
+    #[Override]
     public function create(string $cacheKey = 'http_pipeline'): RequestHandlerInterface
     {
         $cached =  $this->pipelines?->get($cacheKey);
@@ -37,6 +39,7 @@ final readonly class RequestHandlerFactory implements RequestHandlerFactoryInter
         $builder = new MiddlewarePipelineBuilder($this->resolver, $this->logger);
 
         $groups = $this->loader->loadGrouped();
+
         foreach ($groups as $groupName => $definitions) {
             foreach ($definitions as $definition) {
                 $builder->registerAlias($definition->class, $definition->class, overwrite: true);
@@ -57,6 +60,7 @@ final readonly class RequestHandlerFactory implements RequestHandlerFactoryInter
     /**
      * @param list<class-string<MiddlewareInterface>|MiddlewareInterface> $middleware
      */
+    #[Override]
     public function createFromStack(array $middleware): MiddlewarePipeline
     {
         foreach ($middleware as $item) {
