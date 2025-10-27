@@ -7,7 +7,7 @@ namespace Maduser\Argon\Middleware\Middleware;
 use Maduser\Argon\Middleware\Contracts\Middleware\DispatcherInterface;
 use Maduser\Argon\Middleware\Contracts\ResultContextInterface;
 use Maduser\Argon\Middleware\Exception\DispatcherException;
-use Maduser\Argon\Support\Html;
+use Maduser\Argon\Middleware\Support\Html;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
