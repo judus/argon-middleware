@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="tests/bootstrap.php"
+<phpunit bootstrap="vendor/autoload.php"
          colors="true"
          failOnWarning="true"
-         failOnRisky="true">
+         failOnRisky="true"
+         cacheResult="true"
+         cacheDirectory=".phpunit/cache">
 
     <testsuites>
         <testsuite name="integration">
-            <directory suffix="Test.php">tests/Integration</directory>
+            <directory suffix="Test.php">tests/Integration/</directory>
         </testsuite>
         <testsuite name="unit">
-            <directory suffix="Test.php">tests/Unit</directory>
+            <directory suffix="Test.php">tests/Unit/</directory>
         </testsuite>
     </testsuites>
 
+    <source>
+        <include>
+            <directory suffix=".php">src/</directory>
+        </include>
+    </source>
+
     <coverage includeUncoveredFiles="true">
         <report>
-            <clover outputFile="build/logs/clover.xml"/>
-            <html outputDirectory="build/coverage/html"/>
+            <clover outputFile=".phpunit/coverage/clover.xml"/>
+            <html outputDirectory=".phpunit/coverage/html"/>
             <text outputFile="php://stdout"/>
         </report>
     </coverage>
-
-    <source>
-        <include>
-            <directory suffix=".php">src</directory>
-        </include>
-    </source>
 
 </phpunit>
