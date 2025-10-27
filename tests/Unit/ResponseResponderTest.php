@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
+use Maduser\Argon\Middleware\Contracts\ResultContextInterface;
 use Maduser\Argon\Middleware\Middleware\ResponseResponder;
 use Maduser\Argon\Middleware\ResultContext;
+use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Tests\Unit\Fixtures\MinimalResponseFactory;
@@ -29,9 +30,10 @@ final class ResponseResponderTest extends TestCase
             ->method('info')
             ->with(ResponseResponder::class . ' forwards a response');
 
-        $responder = new ResponseResponder($context, $logger);
+        $responder = new ResponseResponder($logger);
 
-        $request = $this->createMock(ServerRequestInterface::class);
+        $request = (new Psr17Factory())->createServerRequest('GET', '/')
+            ->withAttribute(ResultContextInterface::class, $context);
         $next = $this->createMock(RequestHandlerInterface::class);
         $next->expects(self::never())->method('handle');
 
@@ -45,14 +47,14 @@ final class ResponseResponderTest extends TestCase
     public function testProcessDelegatesWhenContextDoesNotContainResponse(): void
     {
         $context = new ResultContext();
-        $responder = new ResponseResponder($context, null);
+        $responder = new ResponseResponder(null);
 
-        $request = $this->createMock(ServerRequestInterface::class);
+        $request = (new Psr17Factory())->createServerRequest('GET', '/')
+            ->withAttribute(ResultContextInterface::class, $context);
         $expected = $this->createMock(ResponseInterface::class);
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects(self::once())
             ->method('handle')
-            ->with($request)
             ->willReturn($expected);
 
         self::assertSame($expected, $responder->process($request, $handler));

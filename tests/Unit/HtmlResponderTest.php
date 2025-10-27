@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
+use Maduser\Argon\Middleware\Contracts\ResultContextInterface;
 use Maduser\Argon\Middleware\Middleware\HtmlResponder;
 use Maduser\Argon\Middleware\ResultContext;
 use Maduser\Argon\Middleware\Support\Html;
+use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Tests\Unit\Fixtures\MinimalResponseFactory;
@@ -30,9 +31,10 @@ final class HtmlResponderTest extends TestCase
                 'type' => 'text/html; charset=UTF-8'
             ]);
 
-        $responder = new HtmlResponder($factory, $factory, $context, $logger);
+        $responder = new HtmlResponder($factory, $factory, $logger);
 
-        $request = $this->createMock(ServerRequestInterface::class);
+        $request = (new Psr17Factory())->createServerRequest('GET', '/')
+            ->withAttribute(ResultContextInterface::class, $context);
         $next = $this->createMock(RequestHandlerInterface::class);
         $next->expects(self::never())->method('handle');
 
@@ -47,14 +49,14 @@ final class HtmlResponderTest extends TestCase
         $factory = new MinimalResponseFactory();
         $context = new ResultContext();
 
-        $responder = new HtmlResponder($factory, $factory, $context, null);
+        $responder = new HtmlResponder($factory, $factory, null);
 
-        $request = $this->createMock(ServerRequestInterface::class);
+        $request = (new Psr17Factory())->createServerRequest('GET', '/')
+            ->withAttribute(ResultContextInterface::class, $context);
         $expected = $this->createMock(ResponseInterface::class);
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects(self::once())
             ->method('handle')
-            ->with($request)
             ->willReturn($expected);
 
         self::assertSame($expected, $responder->process($request, $handler));

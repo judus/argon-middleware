@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Integration;
 
+use Maduser\Argon\Middleware\Contracts\ResultContextInterface;
 use Maduser\Argon\Middleware\MiddlewarePipelineBuilder;
 use Maduser\Argon\Middleware\MiddlewareVerbosity;
 use Maduser\Argon\Middleware\Resolver\StaticMiddlewareResolver;
+use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -33,7 +35,7 @@ final class MiddlewarePipelineBuilderIntegrationTest extends TestCase
 
         $finalHandler = new class implements RequestHandlerInterface
         {
-            public ?ServerRequestInterface $lastRequest = null;
+            public $lastRequest = null;
 
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
@@ -44,15 +46,14 @@ final class MiddlewarePipelineBuilderIntegrationTest extends TestCase
 
         $pipeline = $builder->build($finalHandler);
 
-        $presetRequest = $this->createMock(ServerRequestInterface::class);
-        $incomingRequest = $this->createMock(ServerRequestInterface::class);
+        $incomingRequest = (new Psr17Factory())->createServerRequest('GET', '/pipeline-test');
 
-        $pipeline->setRequest($presetRequest);
         $result = $pipeline->handle($incomingRequest);
 
         self::assertInstanceOf(ResponseStub::class, $result);
         self::assertSame(['builder-recording'], $collector->entries());
-        self::assertSame($presetRequest, $finalHandler->lastRequest);
+        self::assertNotNull($finalHandler->lastRequest);
+        self::assertInstanceOf(ResultContextInterface::class, $finalHandler->lastRequest->getAttribute(ResultContextInterface::class));
 
         $logMessages = array_map(static fn(array $record) => $record['message'], $logger->records());
         self::assertContains('Final handler invoked', $logMessages);

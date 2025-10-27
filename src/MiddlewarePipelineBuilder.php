@@ -104,14 +104,11 @@ final class MiddlewarePipelineBuilder
 
         usort($this->definitions, static fn($a, $b) => $b->priority <=> $a->priority);
 
-        $instances = [];
-        foreach ($this->definitions as $definition) {
-            $instance = $this->resolver->resolve($definition->class);
-            $instances[] = $instance;
-        }
-
         return new MiddlewarePipeline(
-            middleware: $instances,
+            middleware: array_map(
+                static fn(MiddlewareDefinition $definition): string => $definition->class,
+                $this->definitions
+            ),
             resolver: $this->resolver,
             logger: $this->logger,
             finalHandler: $finalHandler,

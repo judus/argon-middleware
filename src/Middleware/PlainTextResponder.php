@@ -18,7 +18,6 @@ final readonly class PlainTextResponder extends AbstractResponder implements Pla
     public function __construct(
         ResponseFactoryInterface $responseFactory,
         StreamFactoryInterface $streamFactory,
-        private ResultContextInterface $result,
         ?LoggerInterface $logger = null,
     ) {
         parent::__construct($responseFactory, $streamFactory, $logger);
@@ -26,8 +25,10 @@ final readonly class PlainTextResponder extends AbstractResponder implements Pla
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if ($this->result->isString()) {
-            return $this->createResponse((string) $this->result->get(), 'text/plain; charset=UTF-8');
+        $context = $request->getAttribute(ResultContextInterface::class);
+
+        if ($context instanceof ResultContextInterface && $context->isString()) {
+            return $this->createResponse((string) $context->get(), 'text/plain; charset=UTF-8');
         }
 
         return $handler->handle($request);

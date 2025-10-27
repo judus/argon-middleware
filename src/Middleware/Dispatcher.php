@@ -7,6 +7,7 @@ namespace Maduser\Argon\Middleware\Middleware;
 use Maduser\Argon\Middleware\Contracts\Middleware\DispatcherInterface;
 use Maduser\Argon\Middleware\Contracts\ResultContextInterface;
 use Maduser\Argon\Middleware\Exception\DispatcherException;
+use Maduser\Argon\Middleware\ResultContext;
 use Maduser\Argon\Middleware\Support\Html;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -18,7 +19,6 @@ final readonly class Dispatcher implements DispatcherInterface
     private const TEMPLATE_PATH = __DIR__ . '/../../resources/argon-prophecy-welcome.html';
 
     public function __construct(
-        private ResultContextInterface $result,
         private ?LoggerInterface $logger = null,
     ) {
     }
@@ -27,21 +27,28 @@ final readonly class Dispatcher implements DispatcherInterface
     {
         $this->logger?->info('DispatcherMiddleware executing dispatch()');
 
-        $this->dispatch($request);
+        $request = $this->dispatch($request);
 
         return $handler->handle($request);
     }
 
-    public function dispatch(ServerRequestInterface $request): void
+    public function dispatch(ServerRequestInterface $request): ServerRequestInterface
     {
         $this->logger?->info('Dispatching placeholder logic');
 
         $html = $this->getPlaceholderHtml();
 
-        $this->result->set(Html::create($html, [
+        $context = $request->getAttribute(ResultContextInterface::class);
+        if (!$context instanceof ResultContextInterface) {
+            $context = new ResultContext();
+        }
+
+        $context->set(Html::create($html, [
             'argonDispatcher' => '\\' . DispatcherInterface::class,
             'customDispatcher' => '\YourApp\YourDispatcher::class',
         ]));
+
+        return $request->withAttribute(ResultContextInterface::class, $context);
     }
 
     private function getPlaceholderHtml(): string

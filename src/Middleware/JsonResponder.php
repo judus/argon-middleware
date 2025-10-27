@@ -20,7 +20,6 @@ final readonly class JsonResponder extends AbstractResponder implements JsonResp
     public function __construct(
         ResponseFactoryInterface $responseFactory,
         StreamFactoryInterface $streamFactory,
-        private ResultContextInterface $result,
         ?LoggerInterface $logger = null,
     ) {
         parent::__construct($responseFactory, $streamFactory, $logger);
@@ -31,10 +30,16 @@ final readonly class JsonResponder extends AbstractResponder implements JsonResp
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /** @var array|JsonSerializable $raw */
-        $raw = $this->result->get();
+        $context = $request->getAttribute(ResultContextInterface::class);
 
-        if ($this->result->isArray() || $raw instanceof JsonSerializable) {
+        if (!$context instanceof ResultContextInterface) {
+            return $handler->handle($request);
+        }
+
+        /** @var array|JsonSerializable $raw */
+        $raw = $context->get();
+
+        if ($context->isArray() || $raw instanceof JsonSerializable) {
             /** @var array|string|null $data */
             $data = $raw instanceof JsonSerializable
                 ? $raw->jsonSerialize()

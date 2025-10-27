@@ -7,7 +7,6 @@ namespace Maduser\Argon\Middleware\Provider;
 use Maduser\Argon\Container\AbstractServiceProvider;
 use Maduser\Argon\Container\ArgonContainer;
 use Maduser\Argon\Container\Exceptions\ContainerException;
-use Maduser\Argon\Middleware\Contracts\ResultContextInterface;
 use Maduser\Argon\Middleware\Factory\RequestHandlerFactory;
 use Maduser\Argon\Middleware\Contracts\MiddlewareLoaderInterface;
 use Maduser\Argon\Middleware\Contracts\MiddlewarePipelineCacheInterface;
@@ -67,7 +66,5 @@ class ArgonMiddlewareServiceProvider extends AbstractServiceProvider
         $container->set(RequestHandlerInterface::class, MiddlewarePipeline::class)
             ->factory(RequestHandlerFactoryInterface::class, 'create')
             ->tag(['middleware.request_handler']);
-
-        $container->set(ResultContextInterface::class, ResultContext::class);
     }
 }

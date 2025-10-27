@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Tests\Unit;
 
 use JsonSerializable;
+use Maduser\Argon\Middleware\Contracts\ResultContextInterface;
 use Maduser\Argon\Middleware\Middleware\JsonResponder;
 use Maduser\Argon\Middleware\ResultContext;
+use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Tests\Unit\Fixtures\MinimalResponseFactory;
@@ -29,9 +30,10 @@ final class JsonResponderTest extends TestCase
                 'type' => 'application/json; charset=UTF-8'
             ]);
 
-        $responder = new JsonResponder($factory, $factory, $context, $logger);
+        $responder = new JsonResponder($factory, $factory, $logger);
 
-        $request = $this->createMock(ServerRequestInterface::class);
+        $request = (new Psr17Factory())->createServerRequest('GET', '/')
+            ->withAttribute(ResultContextInterface::class, $context);
         $finalHandler = $this->createMock(RequestHandlerInterface::class);
         $finalHandler->expects(self::never())->method('handle');
 
@@ -61,9 +63,10 @@ final class JsonResponderTest extends TestCase
                 'type' => 'application/json; charset=UTF-8'
             ]);
 
-        $responder = new JsonResponder($factory, $factory, $context, $logger);
+        $responder = new JsonResponder($factory, $factory, $logger);
 
-        $request = $this->createMock(ServerRequestInterface::class);
+        $request = (new Psr17Factory())->createServerRequest('GET', '/')
+            ->withAttribute(ResultContextInterface::class, $context);
         $finalHandler = $this->createMock(RequestHandlerInterface::class);
 
         $result = $responder->process($request, $finalHandler);
@@ -76,14 +79,14 @@ final class JsonResponderTest extends TestCase
         $factory = new MinimalResponseFactory();
         $context = (new ResultContext())->set('plain');
 
-        $responder = new JsonResponder($factory, $factory, $context, null);
+        $responder = new JsonResponder($factory, $factory, null);
 
-        $request = $this->createMock(ServerRequestInterface::class);
+        $request = (new Psr17Factory())->createServerRequest('GET', '/')
+            ->withAttribute(ResultContextInterface::class, $context);
         $expectedResponse = $this->createMock(ResponseInterface::class);
         $finalHandler = $this->createMock(RequestHandlerInterface::class);
         $finalHandler->expects(self::once())
             ->method('handle')
-            ->with($request)
             ->willReturn($expectedResponse);
 
         self::assertSame($expectedResponse, $responder->process($request, $finalHandler));

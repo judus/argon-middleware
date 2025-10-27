@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit;
 
 use Maduser\Argon\Middleware\Contracts\MiddlewareResolverInterface;
+use Maduser\Argon\Middleware\Contracts\ResultContextInterface;
 use Maduser\Argon\Middleware\MiddlewarePipeline;
 use Maduser\Argon\Middleware\MiddlewareVerbosity;
 use PHPUnit\Framework\TestCase;
@@ -16,37 +17,28 @@ use Psr\Log\NullLogger;
 
 final class MiddlewarePipelineTest extends TestCase
 {
-    public function testHandleUsesRequestProvidedViaSetter(): void
+    public function testHandleSeedsResultContextAndInvokesFinalHandler(): void
     {
         $response = $this->createMock(ResponseInterface::class);
-        $expectedRequest = $this->createMock(ServerRequestInterface::class);
-        $incomingRequest = $this->createMock(ServerRequestInterface::class);
 
-        $finalHandler = new class($response, $this, $expectedRequest) implements RequestHandlerInterface {
-            public function __construct(
-                private ResponseInterface $response,
-                private TestCase $testCase,
-                private ServerRequestInterface $expectedRequest
-            ) {
+        $finalHandler = new class($response) implements RequestHandlerInterface {
+            public ?ServerRequestInterface $handled = null;
+
+            public function __construct(private ResponseInterface $response)
+            {
             }
 
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
-                $this->testCase->assertSame($this->expectedRequest, $request);
+                $this->handled = $request;
                 return $this->response;
             }
         };
 
-        $middleware = new class($this, $expectedRequest) implements MiddlewareInterface {
-            public function __construct(
-                private TestCase $testCase,
-                private ServerRequestInterface $expectedRequest
-            ) {
-            }
-
+        $middleware = new class implements MiddlewareInterface {
             public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
             {
-                $this->testCase->assertSame($this->expectedRequest, $request);
+                TestCase::assertInstanceOf(ResultContextInterface::class, $request->getAttribute(ResultContextInterface::class));
                 return $handler->handle($request);
             }
         };
@@ -59,9 +51,11 @@ final class MiddlewarePipelineTest extends TestCase
             verbosity: MiddlewareVerbosity::NORMAL
         );
 
-        $pipeline->setRequest($expectedRequest);
+        $request = (new \Nyholm\Psr7\Factory\Psr17Factory())->createServerRequest('GET', '/pipeline');
 
-        self::assertSame($response, $pipeline->handle($incomingRequest));
+        self::assertSame($response, $pipeline->handle($request));
+        self::assertInstanceOf(ServerRequestInterface::class, $finalHandler->handled);
+        self::assertInstanceOf(ResultContextInterface::class, $finalHandler->handled->getAttribute(ResultContextInterface::class));
     }
 
     public function testHandleResolvesClassStringsViaResolver(): void

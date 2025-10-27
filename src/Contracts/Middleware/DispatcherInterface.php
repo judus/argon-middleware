@@ -9,5 +9,5 @@ use Psr\Http\Server\MiddlewareInterface;
 
 interface DispatcherInterface extends MiddlewareInterface
 {
-    public function dispatch(ServerRequestInterface $request): void;
+    public function dispatch(ServerRequestInterface $request): ServerRequestInterface;
 }

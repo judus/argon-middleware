@@ -19,7 +19,6 @@ final readonly class HtmlResponder extends AbstractResponder implements HtmlResp
     public function __construct(
         ResponseFactoryInterface $responseFactory,
         StreamFactoryInterface $streamFactory,
-        private ResultContextInterface $result,
         ?LoggerInterface $logger = null,
     ) {
         parent::__construct($responseFactory, $streamFactory, $logger);
@@ -27,8 +26,14 @@ final readonly class HtmlResponder extends AbstractResponder implements HtmlResp
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $context = $request->getAttribute(ResultContextInterface::class);
+
+        if (!$context instanceof ResultContextInterface) {
+            return $handler->handle($request);
+        }
+
         /** @var HtmlableInterface $result */
-        $result = $this->result->get();
+        $result = $context->get();
 
         if ($result instanceof HtmlableInterface) {
             return $this->createResponse($result->toHtml(), 'text/html; charset=UTF-8');

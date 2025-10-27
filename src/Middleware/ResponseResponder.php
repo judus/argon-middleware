@@ -15,18 +15,19 @@ use Psr\Log\LoggerInterface;
 final readonly class ResponseResponder implements MiddlewareInterface, ResponseResponderInterface
 {
     public function __construct(
-        private ResultContextInterface $result,
         private ?LoggerInterface $logger = null,
     ) {
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if ($this->result->is(ResponseInterface::class)) {
+        $context = $request->getAttribute(ResultContextInterface::class);
+
+        if ($context instanceof ResultContextInterface && $context->is(ResponseInterface::class)) {
             $this->logger?->info(get_class($this) . ' forwards a response');
 
             /** @var ResponseInterface */
-            return $this->result->get();
+            return $context->get();
         }
 
         return $handler->handle($request);
