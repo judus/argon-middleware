@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Maduser\Argon\Middleware\Store;
 
 use Maduser\Argon\Container\ArgonContainer;
@@ -7,11 +9,11 @@ use Maduser\Argon\Middleware\Contracts\MiddlewareStackInterface;
 use Maduser\Argon\Middleware\Contracts\PipelineStoreInterface;
 use Maduser\Argon\Middleware\MiddlewarePipeline;
 use Maduser\Argon\Middleware\MiddlewareVerbosity;
+use Maduser\Argon\Middleware\Exception\PipelineStoreException;
 use Maduser\Argon\Middleware\Resolver\ContainerMiddlewareResolver;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use RuntimeException;
 
 class InMemoryStore implements PipelineStoreInterface
 {
@@ -38,10 +40,7 @@ class InMemoryStore implements PipelineStoreInterface
         } else {
             $stack = $this->stacks[$keyOrStack] ?? null;
             if ($stack === null) {
-                throw new RuntimeException(sprintf(
-                    'Pipeline stack [%s] is not registered in the in-memory store.',
-                    $keyOrStack
-                ));
+                throw PipelineStoreException::stackNotRegistered($keyOrStack);
             }
         }
 

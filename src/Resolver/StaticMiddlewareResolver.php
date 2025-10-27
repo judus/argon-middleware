@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Maduser\Argon\Middleware\Resolver;
 
 use Maduser\Argon\Middleware\Contracts\MiddlewareResolverInterface;
-use Maduser\Argon\Middleware\Exception\MiddlewareException;
+use Maduser\Argon\Middleware\Exception\MiddlewareResolverException;
 use Psr\Http\Server\MiddlewareInterface;
 
 final class StaticMiddlewareResolver implements MiddlewareResolverInterface
@@ -18,16 +18,19 @@ final class StaticMiddlewareResolver implements MiddlewareResolverInterface
     {
         foreach ($instances as $class => $instance) {
             if (!$instance instanceof MiddlewareInterface) {
-                throw new MiddlewareException("Instance for '$class' must implement MiddlewareInterface.");
+                throw MiddlewareResolverException::notMiddleware($class, $instance);
             }
             $this->instances[$class] = $instance;
         }
     }
 
+    /**
+     * @throws MiddlewareResolverException
+     */
     public function resolve(string $class): MiddlewareInterface
     {
         if (!isset($this->instances[$class])) {
-            throw new MiddlewareException("No middleware registered for class '$class'.");
+            throw MiddlewareResolverException::notRegistered($class);
         }
 
         return $this->instances[$class];

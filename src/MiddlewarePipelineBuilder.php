@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Maduser\Argon\Middleware;
 
 use Maduser\Argon\Middleware\Contracts\MiddlewareResolverInterface;
-use Maduser\Argon\Middleware\Exception\MiddlewareException;
+use Maduser\Argon\Middleware\Exception\MiddlewarePipelineException;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
@@ -38,13 +38,11 @@ final class MiddlewarePipelineBuilder
     public function registerAlias(string $name, string $class, bool $overwrite = false): self
     {
         if (!is_subclass_of($class, MiddlewareInterface::class)) {
-            throw new MiddlewareException(
-                "Alias '$name' must map to a class implementing MiddlewareInterface. Got: $class"
-            );
+            throw MiddlewarePipelineException::aliasMustImplement($name, $class);
         }
 
         if (isset($this->aliases[$name]) && !$overwrite) {
-            throw new MiddlewareException("Alias '$name' is already defined.");
+            throw MiddlewarePipelineException::aliasAlreadyDefined($name);
         }
 
         $this->aliases[$name] = $class;
@@ -55,12 +53,12 @@ final class MiddlewarePipelineBuilder
     public function registerGroup(string $groupName, array $middlewareNames): self
     {
         if (isset($this->groups[$groupName])) {
-            throw new MiddlewareException("Group '$groupName' is already defined.");
+            throw MiddlewarePipelineException::groupAlreadyDefined($groupName);
         }
 
         foreach ($middlewareNames as $name) {
             if (!is_string($name)) {
-                throw new MiddlewareException("Group '$groupName' contains non-string middleware alias.");
+                throw MiddlewarePipelineException::groupContainsNonString($groupName, $name);
             }
         }
 
@@ -88,7 +86,7 @@ final class MiddlewarePipelineBuilder
     public function addGroup(string $groupName): self
     {
         if (!array_key_exists($groupName, $this->groups)) {
-            throw new MiddlewareException("Middleware group '$groupName' is not defined.");
+            throw MiddlewarePipelineException::groupNotDefined($groupName);
         }
 
         foreach ($this->groups[$groupName] as $alias) {
@@ -101,7 +99,7 @@ final class MiddlewarePipelineBuilder
     public function build(?RequestHandlerInterface $finalHandler = null): MiddlewarePipeline
     {
         if ($this->definitions === []) {
-            throw new MiddlewareException("Cannot build a pipeline with no middleware.");
+            throw MiddlewarePipelineException::emptyPipeline();
         }
 
         usort($this->definitions, static fn($a, $b) => $b->priority <=> $a->priority);

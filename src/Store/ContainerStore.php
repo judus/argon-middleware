@@ -11,8 +11,8 @@ use Maduser\Argon\Middleware\Contracts\MiddlewareStackInterface;
 use Maduser\Argon\Middleware\Contracts\PipelineStoreInterface;
 use Maduser\Argon\Middleware\Factory\RequestHandlerFactory;
 use Maduser\Argon\Middleware\MiddlewarePipeline;
+use Maduser\Argon\Middleware\Exception\PipelineStoreException;
 use Psr\Http\Server\RequestHandlerInterface;
-use RuntimeException;
 
 final readonly class ContainerStore implements PipelineStoreInterface
 {
@@ -68,20 +68,14 @@ final readonly class ContainerStore implements PipelineStoreInterface
      *
      * @throws ContainerException
      * @throws NotFoundException
-     * @throws RuntimeException
+     * @throws PipelineStoreException
      */
     public function getRequestHandler(string $pipelineId): RequestHandlerInterface
     {
         $handler = $this->container->get($pipelineId);
 
         if (!$handler instanceof RequestHandlerInterface) {
-            throw new RuntimeException(
-                sprintf(
-                    'Container service [%s] is not a RequestHandlerInterface. Got [%s].',
-                    $pipelineId,
-                    $handler::class
-                )
-            );
+            throw PipelineStoreException::handlerTypeMismatch($pipelineId, $handler);
         }
 
         return $handler;

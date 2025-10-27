@@ -6,12 +6,12 @@ namespace Maduser\Argon\Middleware\Middleware;
 
 use Maduser\Argon\Middleware\Contracts\Middleware\DispatcherInterface;
 use Maduser\Argon\Middleware\Contracts\ResultContextInterface;
+use Maduser\Argon\Middleware\Exception\DispatcherException;
 use Maduser\Argon\Support\Html;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 
 final readonly class Dispatcher implements DispatcherInterface
 {
@@ -49,7 +49,7 @@ final readonly class Dispatcher implements DispatcherInterface
         if (!file_exists(self::TEMPLATE_PATH)) {
             // This throw is only reachable if deployment is broken and the template file is missing
             // @codeCoverageIgnoreStart
-            throw new RuntimeException('Missing welcome template at ' . self::TEMPLATE_PATH);
+            throw DispatcherException::missingTemplate(self::TEMPLATE_PATH);
             // @codeCoverageIgnoreEnd
         }
 

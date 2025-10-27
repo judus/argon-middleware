@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Maduser\Argon\Middleware\Factory;
 
-use InvalidArgumentException;
 use Maduser\Argon\Middleware\Contracts\MiddlewareLoaderInterface;
 use Maduser\Argon\Middleware\Contracts\MiddlewareResolverInterface;
 use Maduser\Argon\Middleware\Contracts\PipelineManagerInterface;
 use Maduser\Argon\Middleware\Contracts\RequestHandlerFactoryInterface;
+use Maduser\Argon\Middleware\Exception\RequestHandlerFactoryException;
 use Maduser\Argon\Middleware\MiddlewareDefinition;
 use Maduser\Argon\Middleware\MiddlewarePipeline;
 use Maduser\Argon\Middleware\MiddlewarePipelineBuilder;
@@ -65,10 +65,7 @@ final readonly class RequestHandlerFactory implements RequestHandlerFactoryInter
     {
         foreach ($middleware as $item) {
             if (!is_string($item) && !$item instanceof MiddlewareInterface) {
-                throw new InvalidArgumentException(sprintf(
-                    'Middleware must be class-string or instance of MiddlewareInterface. Got: %s',
-                    get_debug_type($item)
-                ));
+                throw RequestHandlerFactoryException::invalidMiddlewareItem($item);
             }
         }
 

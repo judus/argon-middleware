@@ -6,6 +6,6 @@ namespace Maduser\Argon\Middleware\Exception;
 
 use RuntimeException;
 
-final class MiddlewareException extends RuntimeException
+class MiddlewareException extends RuntimeException
 {
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use Maduser\Argon\Middleware\Exception\MiddlewareException;
+use Maduser\Argon\Middleware\Exception\MiddlewareResolverException;
 use Maduser\Argon\Middleware\Resolver\StaticMiddlewareResolver;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -16,8 +16,8 @@ final class StaticMiddlewareResolverTest extends TestCase
 {
     public function testConstructorRejectsNonMiddlewareInstances(): void
     {
-        $this->expectException(MiddlewareException::class);
-        $this->expectExceptionMessage("Instance for 'stdClass' must implement MiddlewareInterface.");
+        $this->expectException(MiddlewareResolverException::class);
+        $this->expectExceptionMessage("Resolved instance for 'stdClass' must implement MiddlewareInterface. Got stdClass.");
 
         new StaticMiddlewareResolver([
             \stdClass::class => new \stdClass(),
@@ -28,7 +28,7 @@ final class StaticMiddlewareResolverTest extends TestCase
     {
         $resolver = new StaticMiddlewareResolver([]);
 
-        $this->expectException(MiddlewareException::class);
+        $this->expectException(MiddlewareResolverException::class);
         $this->expectExceptionMessage("No middleware registered for class 'Tests\\Unit\\StubMiddleware'.");
 
         $resolver->resolve(StubMiddleware::class);

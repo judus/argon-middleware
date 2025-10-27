@@ -6,7 +6,7 @@ namespace Maduser\Argon\Middleware;
 
 use Maduser\Argon\Middleware\Exception\EmptyMiddlewareChainException;
 use Maduser\Argon\Middleware\Contracts\MiddlewareResolverInterface;
-use Maduser\Argon\Middleware\Exception\MiddlewareException;
+use Maduser\Argon\Middleware\Exception\MiddlewareDispatcherException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -49,11 +49,7 @@ final class MiddlewareDispatcher implements RequestHandlerInterface
         } elseif ($entry instanceof MiddlewareInterface) {
             $middleware = $entry;
         } else {
-            throw new MiddlewareException(sprintf(
-                'Invalid middleware entry at index %d. Must be class-string or MiddlewareInterface, got: %s',
-                $this->index - 1,
-                get_debug_type($entry)
-            ));
+            throw MiddlewareDispatcherException::invalidEntry($this->index - 1, $entry);
         }
 
         if ($this->verbosity >= MiddlewareVerbosity::NORMAL) {

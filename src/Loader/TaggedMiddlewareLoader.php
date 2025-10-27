@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Maduser\Argon\Middleware\Loader;
 
 use Maduser\Argon\Middleware\Contracts\MiddlewareLoaderInterface;
-use Maduser\Argon\Middleware\Exception\MiddlewareException;
+use Maduser\Argon\Middleware\Exception\MiddlewareLoaderException;
 use Maduser\Argon\Container\ArgonContainer;
 use Maduser\Argon\Middleware\MiddlewareDefinition;
 
@@ -19,11 +19,12 @@ final readonly class TaggedMiddlewareLoader implements MiddlewareLoaderInterface
 
     /**
      * @return list<MiddlewareDefinition>
+     * @throws MiddlewareLoaderException
      */
     public function load(): array
     {
         if ($this->tag === null) {
-            throw new MiddlewareException('No tag provided for loading middleware.');
+            throw MiddlewareLoaderException::missingTag();
         }
 
         $tagged = $this->container->getTaggedMeta($this->tag);
@@ -39,11 +40,12 @@ final readonly class TaggedMiddlewareLoader implements MiddlewareLoaderInterface
 
     /**
      * @return array<string, list<MiddlewareDefinition>>
+     * @throws MiddlewareLoaderException
      */
     public function loadGrouped(): array
     {
         if ($this->tag === null) {
-            throw new MiddlewareException('No tag provided for loading middleware.');
+            throw MiddlewareLoaderException::missingTag();
         }
 
         $tagged = $this->container->getTaggedMeta($this->tag);
