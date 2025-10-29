@@ -23,7 +23,7 @@ use Maduser\Argon\Middleware\ResultContext;
 use Maduser\Argon\Middleware\Store\ContainerStore;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class ArgonMiddlewareServiceProvider extends AbstractServiceProvider
+class RequestHandlerServiceProvider extends AbstractServiceProvider
 {
     private const DEFAULT_MIDDLEWARE_TAG = 'middleware.http';
 
@@ -38,33 +38,26 @@ class ArgonMiddlewareServiceProvider extends AbstractServiceProvider
 
         $container->set(PipelineManagerInterface::class, PipelineManager::class, [
             'store' => PipelineStoreInterface::class,
-        ])
-            ->tag(['middleware.manager']);
+        ]);
 
-        $container->set(PipelineStoreInterface::class, ContainerStore::class)
-            ->tag(['middleware.store']);
+        $container->set(PipelineStoreInterface::class, ContainerStore::class);
 
         $container->set(MiddlewareLoaderInterface::class, TaggedMiddlewareLoader::class, [
             'tag' => $container->getParameters()->get('middleware.tag', self::DEFAULT_MIDDLEWARE_TAG),
-        ])
-            ->tag(['middleware.loader']);
+        ]);
 
-        $container->set(MiddlewarePipelineCacheInterface::class, MiddlewarePipelineCache::class)
-            ->tag(['middleware.cache']);
+        $container->set(MiddlewarePipelineCacheInterface::class, MiddlewarePipelineCache::class);
 
-        $container->set(MiddlewareResolverInterface::class, ContainerMiddlewareResolver::class)
-            ->tag(['middleware.resolver']);
+        $container->set(MiddlewareResolverInterface::class, ContainerMiddlewareResolver::class);
 
         /**
          * Override the default middleware pipeline
          */
         $container->set(RequestHandlerFactory::class);
 
-        $container->set(RequestHandlerFactoryInterface::class, RequestHandlerFactory::class)
-            ->tag(['middleware.request_handler_factory']);
+        $container->set(RequestHandlerFactoryInterface::class, RequestHandlerFactory::class);
 
         $container->set(RequestHandlerInterface::class, MiddlewarePipeline::class)
-            ->factory(RequestHandlerFactoryInterface::class, 'create')
-            ->tag(['middleware.request_handler']);
+            ->factory(RequestHandlerFactoryInterface::class, 'create');
     }
 }
