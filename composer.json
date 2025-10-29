@@ -16,9 +16,15 @@
     {
       "type": "path",
       "url": "~/workspace/argon/packages/maduser-argon"
+    },
+    {
+      "type": "path",
+      "url": "~/workspace/argon/packages/maduser-argon-support"
     }
   ],
   "require": {
+    "maduser/argon": "dev-master",
+    "maduser/argon-support": "dev-master",
     "psr/http-message": "^2.0",
     "psr/http-server-handler": "^1.0",
     "psr/http-server-middleware": "^1.0",
@@ -26,7 +32,6 @@
   },
   "require-dev": {
     "nyholm/psr7": "^1.8",
-    "maduser/argon": "dev-master",
     "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
     "phpunit/phpunit": "^11.5",
     "slevomat/coding-standard": "^8.24",

@@ -4,8 +4,393 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5fc1f448781c841912b7a711b4e82334",
+    "content-hash": "6fe9f61c05193f2a2eaaf936bc969f16",
     "packages": [
+        {
+            "name": "maduser/argon",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "/home/maduser/workspace/argon/packages/maduser-argon",
+                "reference": "34ef90537ca13674d00735b57132b26d62562ae4"
+            },
+            "require": {
+                "nette/php-generator": "^4.2",
+                "php": "^8.2",
+                "psr/container": "^2.0"
+            },
+            "require-dev": {
+                "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
+                "phpunit/phpunit": "^11.5",
+                "slevomat/coding-standard": "^8.24",
+                "squizlabs/php_codesniffer": "^4.0",
+                "vimeo/psalm": "^6.13"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Maduser\\Argon\\Container\\": "src/"
+                },
+                "files": [
+                    "autoload/override-attribute.php"
+                ]
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Tests\\Mocks\\": "tests/resources/mocks/",
+                    "Tests\\Unit\\": "tests/unit/",
+                    "Tests\\Integration\\": "tests/integration/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/phpunit"
+                ],
+                "test:coverage": [
+                    "vendor/bin/phpunit  --coverage-clover=coverage.xml --coverage-html coverage-report && open coverage-report/index.html"
+                ],
+                "phpcs": [
+                    "vendor/bin/phpcs --standard=phpcs.xml"
+                ],
+                "psalm": [
+                    "vendor/bin/psalm --output-format=github"
+                ],
+                "phpcs:fix": [
+                    "vendor/bin/phpcbf --standard=phpcs.xml"
+                ],
+                "check": [
+                    "@test",
+                    "@psalm",
+                    "@phpcs:fix",
+                    "@phpcs"
+                ],
+                "ci": [
+                    "@test",
+                    "@test:coverage",
+                    "@psalm",
+                    "@phpcs"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Julien Duseyau",
+                    "email": "julien.duseyau@gmail.com"
+                }
+            ],
+            "description": "A high-performance, modular, PSR-11 compliant dependency injection container for PHP.",
+            "transport-options": {
+                "relative": false
+            }
+        },
+        {
+            "name": "maduser/argon-support",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "/home/maduser/workspace/argon/packages/maduser-argon-support",
+                "reference": "3eaa0bbcd37736543e862448d2b89dd293dbb9f3"
+            },
+            "require": {
+                "psr/http-message": "^2.0",
+                "psr/http-server-handler": "^1.0"
+            },
+            "require-dev": {
+                "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
+                "phpunit/phpunit": "^11.5",
+                "slevomat/coding-standard": "^8.24",
+                "squizlabs/php_codesniffer": "^4.0",
+                "vimeo/psalm": "^6.13"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Maduser\\Argon\\Support\\": "src/"
+                },
+                "files": [
+                    "src/polyfills/Override.php"
+                ]
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "phpcs": [
+                    "vendor/bin/phpcs --standard=phpcs.xml"
+                ],
+                "phpcs:fix": [
+                    "vendor/bin/phpcbf --standard=phpcs.xml"
+                ],
+                "psalm": [
+                    "vendor/bin/psalm --output-format=github"
+                ],
+                "psalm:clear": [
+                    "vendor/bin/psalm --clear-cache"
+                ],
+                "test": [
+                    "vendor/bin/phpunit"
+                ],
+                "test:coverage": [
+                    "mkdir -p storage/phpunit/coverage/html && vendor/bin/phpunit --coverage-html storage/phpunit/coverage/html --coverage-clover storage/phpunit/coverage/clover.xml && open storage/phpunit/coverage/html/index.html"
+                ],
+                "ti": [
+                    "vendor/bin/phpunit --testsuite=integration"
+                ],
+                "tu": [
+                    "vendor/bin/phpunit --testsuite=unit"
+                ],
+                "watch": [
+                    "find src/ | entr -r composer check"
+                ],
+                "watch:test": [
+                    "find src/ | entr -r composer test"
+                ],
+                "watch:fix": [
+                    "find src/ | entr -r composer phpcs:fix"
+                ],
+                "check": [
+                    "@test:coverage",
+                    "@psalm",
+                    "@phpcs:fix",
+                    "@phpcs"
+                ],
+                "ci": [
+                    "@test",
+                    "@psalm",
+                    "@phpcs"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Julien Duseyau",
+                    "email": "julien.duseyau@gmail.com"
+                }
+            ],
+            "transport-options": {
+                "relative": false
+            }
+        },
+        {
+            "name": "nette/php-generator",
+            "version": "v4.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nette/php-generator.git",
+                "reference": "4707546a1f11badd72f5d82af4f8a6bc64bd56ac"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nette/php-generator/zipball/4707546a1f11badd72f5d82af4f8a6bc64bd56ac",
+                "reference": "4707546a1f11badd72f5d82af4f8a6bc64bd56ac",
+                "shasum": ""
+            },
+            "require": {
+                "nette/utils": "^4.0.6",
+                "php": "8.1 - 8.5"
+            },
+            "require-dev": {
+                "jetbrains/phpstorm-attributes": "^1.2",
+                "nette/tester": "^2.4",
+                "nikic/php-parser": "^5.0",
+                "phpstan/phpstan-nette": "^2.0@stable",
+                "tracy/tracy": "^2.8"
+            },
+            "suggest": {
+                "nikic/php-parser": "to use ClassType::from(withBodies: true) & ClassType::fromCode()"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Nette\\": "src"
+                },
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause",
+                "GPL-2.0-only",
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "David Grudl",
+                    "homepage": "https://davidgrudl.com"
+                },
+                {
+                    "name": "Nette Community",
+                    "homepage": "https://nette.org/contributors"
+                }
+            ],
+            "description": "🐘 Nette PHP Generator: generates neat PHP code for you. Supports new PHP 8.5 features.",
+            "homepage": "https://nette.org",
+            "keywords": [
+                "code",
+                "nette",
+                "php",
+                "scaffolding"
+            ],
+            "support": {
+                "issues": "https://github.com/nette/php-generator/issues",
+                "source": "https://github.com/nette/php-generator/tree/v4.2.0"
+            },
+            "time": "2025-08-06T18:24:31+00:00"
+        },
+        {
+            "name": "nette/utils",
+            "version": "v4.0.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nette/utils.git",
+                "reference": "c930ca4e3cf4f17dcfb03037703679d2396d2ede"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nette/utils/zipball/c930ca4e3cf4f17dcfb03037703679d2396d2ede",
+                "reference": "c930ca4e3cf4f17dcfb03037703679d2396d2ede",
+                "shasum": ""
+            },
+            "require": {
+                "php": "8.0 - 8.5"
+            },
+            "conflict": {
+                "nette/finder": "<3",
+                "nette/schema": "<1.2.2"
+            },
+            "require-dev": {
+                "jetbrains/phpstorm-attributes": "^1.2",
+                "nette/tester": "^2.5",
+                "phpstan/phpstan-nette": "^2.0@stable",
+                "tracy/tracy": "^2.9"
+            },
+            "suggest": {
+                "ext-gd": "to use Image",
+                "ext-iconv": "to use Strings::webalize(), toAscii(), chr() and reverse()",
+                "ext-intl": "to use Strings::webalize(), toAscii(), normalize() and compare()",
+                "ext-json": "to use Nette\\Utils\\Json",
+                "ext-mbstring": "to use Strings::lower() etc...",
+                "ext-tokenizer": "to use Nette\\Utils\\Reflection::getUseStatements()"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Nette\\": "src"
+                },
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause",
+                "GPL-2.0-only",
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "David Grudl",
+                    "homepage": "https://davidgrudl.com"
+                },
+                {
+                    "name": "Nette Community",
+                    "homepage": "https://nette.org/contributors"
+                }
+            ],
+            "description": "🛠  Nette Utils: lightweight utilities for string & array manipulation, image handling, safe JSON encoding/decoding, validation, slug or strong password generating etc.",
+            "homepage": "https://nette.org",
+            "keywords": [
+                "array",
+                "core",
+                "datetime",
+                "images",
+                "json",
+                "nette",
+                "paginator",
+                "password",
+                "slugify",
+                "string",
+                "unicode",
+                "utf-8",
+                "utility",
+                "validation"
+            ],
+            "support": {
+                "issues": "https://github.com/nette/utils/issues",
+                "source": "https://github.com/nette/utils/tree/v4.0.8"
+            },
+            "time": "2025-08-06T21:43:34+00:00"
+        },
+        {
+            "name": "psr/container",
+            "version": "2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/container.git",
+                "reference": "c71ecc56dfe541dbd90c5360474fbc405f8d5963"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/container/zipball/c71ecc56dfe541dbd90c5360474fbc405f8d5963",
+                "reference": "c71ecc56dfe541dbd90c5360474fbc405f8d5963",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Container\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common Container Interface (PHP FIG PSR-11)",
+            "homepage": "https://github.com/php-fig/container",
+            "keywords": [
+                "PSR-11",
+                "container",
+                "container-interface",
+                "container-interop",
+                "psr"
+            ],
+            "support": {
+                "issues": "https://github.com/php-fig/container/issues",
+                "source": "https://github.com/php-fig/container/tree/2.0.2"
+            },
+            "time": "2021-11-05T16:47:00+00:00"
+        },
         {
             "name": "psr/http-message",
             "version": "2.0",
@@ -1881,85 +2266,6 @@
             "time": "2024-12-08T08:18:47+00:00"
         },
         {
-            "name": "maduser/argon",
-            "version": "dev-master",
-            "dist": {
-                "type": "path",
-                "url": "/home/maduser/workspace/argon/packages/maduser-argon",
-                "reference": "3bb606f52e5fc950688b93fc4903a1291313cd2d"
-            },
-            "require": {
-                "nette/php-generator": "^4.2",
-                "php": "^8.2",
-                "psr/container": "^2.0"
-            },
-            "require-dev": {
-                "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
-                "phpunit/phpunit": "^11.5",
-                "slevomat/coding-standard": "^8.24",
-                "squizlabs/php_codesniffer": "^4.0",
-                "vimeo/psalm": "^6.13"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Maduser\\Argon\\Container\\": "src/"
-                },
-                "files": [
-                    "autoload/override-attribute.php"
-                ]
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Tests\\Mocks\\": "tests/resources/mocks/",
-                    "Tests\\Unit\\": "tests/unit/",
-                    "Tests\\Integration\\": "tests/integration/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "vendor/bin/phpunit"
-                ],
-                "test:coverage": [
-                    "vendor/bin/phpunit  --coverage-clover=coverage.xml --coverage-html coverage-report && open coverage-report/index.html"
-                ],
-                "phpcs": [
-                    "vendor/bin/phpcs --standard=phpcs.xml"
-                ],
-                "psalm": [
-                    "vendor/bin/psalm --output-format=github"
-                ],
-                "phpcs:fix": [
-                    "vendor/bin/phpcbf --standard=phpcs.xml"
-                ],
-                "check": [
-                    "@test",
-                    "@psalm",
-                    "@phpcs:fix",
-                    "@phpcs"
-                ],
-                "ci": [
-                    "@test",
-                    "@test:coverage",
-                    "@psalm",
-                    "@phpcs"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Julien Duseyau",
-                    "email": "julien.duseyau@gmail.com"
-                }
-            ],
-            "description": "A high-performance, modular, PSR-11 compliant dependency injection container for PHP.",
-            "transport-options": {
-                "relative": false
-            }
-        },
-        {
             "name": "myclabs/deep-copy",
             "version": "1.13.4",
             "source": {
@@ -2069,167 +2375,6 @@
                 "source": "https://github.com/cweiske/jsonmapper/tree/v5.0.0"
             },
             "time": "2024-09-08T10:20:00+00:00"
-        },
-        {
-            "name": "nette/php-generator",
-            "version": "v4.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nette/php-generator.git",
-                "reference": "4707546a1f11badd72f5d82af4f8a6bc64bd56ac"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/nette/php-generator/zipball/4707546a1f11badd72f5d82af4f8a6bc64bd56ac",
-                "reference": "4707546a1f11badd72f5d82af4f8a6bc64bd56ac",
-                "shasum": ""
-            },
-            "require": {
-                "nette/utils": "^4.0.6",
-                "php": "8.1 - 8.5"
-            },
-            "require-dev": {
-                "jetbrains/phpstorm-attributes": "^1.2",
-                "nette/tester": "^2.4",
-                "nikic/php-parser": "^5.0",
-                "phpstan/phpstan-nette": "^2.0@stable",
-                "tracy/tracy": "^2.8"
-            },
-            "suggest": {
-                "nikic/php-parser": "to use ClassType::from(withBodies: true) & ClassType::fromCode()"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "4.2-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Nette\\": "src"
-                },
-                "classmap": [
-                    "src/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause",
-                "GPL-2.0-only",
-                "GPL-3.0-only"
-            ],
-            "authors": [
-                {
-                    "name": "David Grudl",
-                    "homepage": "https://davidgrudl.com"
-                },
-                {
-                    "name": "Nette Community",
-                    "homepage": "https://nette.org/contributors"
-                }
-            ],
-            "description": "🐘 Nette PHP Generator: generates neat PHP code for you. Supports new PHP 8.5 features.",
-            "homepage": "https://nette.org",
-            "keywords": [
-                "code",
-                "nette",
-                "php",
-                "scaffolding"
-            ],
-            "support": {
-                "issues": "https://github.com/nette/php-generator/issues",
-                "source": "https://github.com/nette/php-generator/tree/v4.2.0"
-            },
-            "time": "2025-08-06T18:24:31+00:00"
-        },
-        {
-            "name": "nette/utils",
-            "version": "v4.0.8",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nette/utils.git",
-                "reference": "c930ca4e3cf4f17dcfb03037703679d2396d2ede"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/nette/utils/zipball/c930ca4e3cf4f17dcfb03037703679d2396d2ede",
-                "reference": "c930ca4e3cf4f17dcfb03037703679d2396d2ede",
-                "shasum": ""
-            },
-            "require": {
-                "php": "8.0 - 8.5"
-            },
-            "conflict": {
-                "nette/finder": "<3",
-                "nette/schema": "<1.2.2"
-            },
-            "require-dev": {
-                "jetbrains/phpstorm-attributes": "^1.2",
-                "nette/tester": "^2.5",
-                "phpstan/phpstan-nette": "^2.0@stable",
-                "tracy/tracy": "^2.9"
-            },
-            "suggest": {
-                "ext-gd": "to use Image",
-                "ext-iconv": "to use Strings::webalize(), toAscii(), chr() and reverse()",
-                "ext-intl": "to use Strings::webalize(), toAscii(), normalize() and compare()",
-                "ext-json": "to use Nette\\Utils\\Json",
-                "ext-mbstring": "to use Strings::lower() etc...",
-                "ext-tokenizer": "to use Nette\\Utils\\Reflection::getUseStatements()"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "4.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Nette\\": "src"
-                },
-                "classmap": [
-                    "src/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause",
-                "GPL-2.0-only",
-                "GPL-3.0-only"
-            ],
-            "authors": [
-                {
-                    "name": "David Grudl",
-                    "homepage": "https://davidgrudl.com"
-                },
-                {
-                    "name": "Nette Community",
-                    "homepage": "https://nette.org/contributors"
-                }
-            ],
-            "description": "🛠  Nette Utils: lightweight utilities for string & array manipulation, image handling, safe JSON encoding/decoding, validation, slug or strong password generating etc.",
-            "homepage": "https://nette.org",
-            "keywords": [
-                "array",
-                "core",
-                "datetime",
-                "images",
-                "json",
-                "nette",
-                "paginator",
-                "password",
-                "slugify",
-                "string",
-                "unicode",
-                "utf-8",
-                "utility",
-                "validation"
-            ],
-            "support": {
-                "issues": "https://github.com/nette/utils/issues",
-                "source": "https://github.com/nette/utils/tree/v4.0.8"
-            },
-            "time": "2025-08-06T21:43:34+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -3150,59 +3295,6 @@
                 }
             ],
             "time": "2025-09-28T12:09:13+00:00"
-        },
-        {
-            "name": "psr/container",
-            "version": "2.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/container.git",
-                "reference": "c71ecc56dfe541dbd90c5360474fbc405f8d5963"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/container/zipball/c71ecc56dfe541dbd90c5360474fbc405f8d5963",
-                "reference": "c71ecc56dfe541dbd90c5360474fbc405f8d5963",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.4.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Psr\\Container\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "https://www.php-fig.org/"
-                }
-            ],
-            "description": "Common Container Interface (PHP FIG PSR-11)",
-            "homepage": "https://github.com/php-fig/container",
-            "keywords": [
-                "PSR-11",
-                "container",
-                "container-interface",
-                "container-interop",
-                "psr"
-            ],
-            "support": {
-                "issues": "https://github.com/php-fig/container/issues",
-                "source": "https://github.com/php-fig/container/tree/2.0.2"
-            },
-            "time": "2021-11-05T16:47:00+00:00"
         },
         {
             "name": "psr/http-factory",
@@ -4583,16 +4675,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v7.3.4",
+            "version": "v7.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "2b9c5fafbac0399a20a2e82429e2bd735dcfb7db"
+                "reference": "cdb80fa5869653c83cfe1a9084a673b6daf57ea7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/2b9c5fafbac0399a20a2e82429e2bd735dcfb7db",
-                "reference": "2b9c5fafbac0399a20a2e82429e2bd735dcfb7db",
+                "url": "https://api.github.com/repos/symfony/console/zipball/cdb80fa5869653c83cfe1a9084a673b6daf57ea7",
+                "reference": "cdb80fa5869653c83cfe1a9084a673b6daf57ea7",
                 "shasum": ""
             },
             "require": {
@@ -4657,7 +4749,7 @@
                 "terminal"
             ],
             "support": {
-                "source": "https://github.com/symfony/console/tree/v7.3.4"
+                "source": "https://github.com/symfony/console/tree/v7.3.5"
             },
             "funding": [
                 {
@@ -4677,7 +4769,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-09-22T15:31:00+00:00"
+            "time": "2025-10-14T15:46:26+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -5634,7 +5726,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "maduser/argon": 20
+        "maduser/argon": 20,
+        "maduser/argon-support": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
