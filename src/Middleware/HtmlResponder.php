@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Maduser\Argon\Middleware\Middleware;
 
-use Maduser\Argon\Middleware\Contracts\Middleware\HtmlableInterface;
+use Maduser\Argon\Support\Contracts\HtmlableInterface;
 use Maduser\Argon\Middleware\Contracts\Middleware\HtmlResponderInterface;
 use Maduser\Argon\Middleware\Contracts\ResultContextInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
