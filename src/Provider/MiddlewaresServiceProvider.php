@@ -27,8 +27,7 @@ class MiddlewaresServiceProvider extends AbstractServiceProvider
     #[Override]
     public function register(ArgonContainer $container): void
     {
-        $container->set(DispatcherInterface::class, Dispatcher::class)
-            ->tag(['middleware.http' => ['priority' => 6000, 'group' => ['api', 'web']]]);
+
 
         $container->set(JsonResponderInterface::class, JsonResponder::class)
             ->tag(['middleware.http' => ['priority' => 5800, 'group' => ['api', 'web']]]);
