@@ -10,7 +10,7 @@ use Maduser\Argon\Middleware\Contracts\PipelineStoreInterface;
 use Maduser\Argon\Middleware\Store\InMemoryStore;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class PipelineManager implements PipelineManagerInterface
+final class PipelineManager implements PipelineManagerInterface
 {
     private PipelineStoreInterface $store;
 
@@ -20,11 +20,13 @@ class PipelineManager implements PipelineManagerInterface
         $this->store = $store ?? new InMemoryStore();
     }
 
+    #[\Override]
     public function register(MiddlewareStackInterface $stack): void
     {
         $this->store->register($stack);
     }
 
+    #[\Override]
     public function get(MiddlewareStackInterface|string $keyOrStack): RequestHandlerInterface
     {
         return $this->store->get($keyOrStack);

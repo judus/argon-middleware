@@ -19,7 +19,7 @@ use Maduser\Argon\Middleware\Middleware\PlainTextResponder;
 use Maduser\Argon\Middleware\Middleware\ResponseResponder;
 use Override;
 
-class MiddlewaresServiceProvider extends AbstractServiceProvider
+final class MiddlewaresServiceProvider extends AbstractServiceProvider
 {
     /**
      * @throws ContainerException
@@ -27,8 +27,6 @@ class MiddlewaresServiceProvider extends AbstractServiceProvider
     #[Override]
     public function register(ArgonContainer $container): void
     {
-
-
         $container->set(JsonResponderInterface::class, JsonResponder::class)
             ->tag(['middleware.http' => ['priority' => 5800, 'group' => ['api', 'web']]]);
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use Maduser\Argon\Middleware\Support\Html;
+use Maduser\Argon\Support\Helper\Html;
 use PHPUnit\Framework\TestCase;
 
 final class HtmlTest extends TestCase

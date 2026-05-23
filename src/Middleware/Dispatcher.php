@@ -23,6 +23,7 @@ final readonly class Dispatcher implements DispatcherInterface
     ) {
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $this->logger?->info('DispatcherMiddleware executing dispatch()');
@@ -32,12 +33,14 @@ final readonly class Dispatcher implements DispatcherInterface
         return $handler->handle($request);
     }
 
+    #[\Override]
     public function dispatch(ServerRequestInterface $request): ServerRequestInterface
     {
         $this->logger?->info('Dispatching placeholder logic');
 
         $html = $this->getPlaceholderHtml();
 
+        /** @psalm-suppress MixedAssignment PSR-7 request attributes are intentionally mixed. */
         $context = $request->getAttribute(ResultContextInterface::class);
         if (!$context instanceof ResultContextInterface) {
             $context = new ResultContext();
@@ -60,6 +63,15 @@ final readonly class Dispatcher implements DispatcherInterface
             // @codeCoverageIgnoreEnd
         }
 
-        return file_get_contents(self::TEMPLATE_PATH);
+        $html = file_get_contents(self::TEMPLATE_PATH);
+
+        if ($html === false) {
+            // This throw is only reachable if deployment is broken and the template file cannot be read
+            // @codeCoverageIgnoreStart
+            throw DispatcherException::missingTemplate(self::TEMPLATE_PATH);
+            // @codeCoverageIgnoreEnd
+        }
+
+        return $html;
     }
 }

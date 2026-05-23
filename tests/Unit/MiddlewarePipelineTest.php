@@ -14,6 +14,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\NullLogger;
+use Tests\Unit\Fixtures\StubMiddleware;
 
 final class MiddlewarePipelineTest extends TestCase
 {
@@ -21,13 +22,14 @@ final class MiddlewarePipelineTest extends TestCase
     {
         $response = $this->createMock(ResponseInterface::class);
 
-        $finalHandler = new class($response) implements RequestHandlerInterface {
+        $finalHandler = new class ($response) implements RequestHandlerInterface {
             public ?ServerRequestInterface $handled = null;
 
             public function __construct(private ResponseInterface $response)
             {
             }
 
+            #[\Override]
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 $this->handled = $request;
@@ -36,9 +38,15 @@ final class MiddlewarePipelineTest extends TestCase
         };
 
         $middleware = new class implements MiddlewareInterface {
-            public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-            {
-                TestCase::assertInstanceOf(ResultContextInterface::class, $request->getAttribute(ResultContextInterface::class));
+            #[\Override]
+            public function process(
+                ServerRequestInterface $request,
+                RequestHandlerInterface $handler
+            ): ResponseInterface {
+                TestCase::assertInstanceOf(
+                    ResultContextInterface::class,
+                    $request->getAttribute(ResultContextInterface::class)
+                );
                 return $handler->handle($request);
             }
         };
@@ -55,7 +63,10 @@ final class MiddlewarePipelineTest extends TestCase
 
         self::assertSame($response, $pipeline->handle($request));
         self::assertInstanceOf(ServerRequestInterface::class, $finalHandler->handled);
-        self::assertInstanceOf(ResultContextInterface::class, $finalHandler->handled->getAttribute(ResultContextInterface::class));
+        self::assertInstanceOf(
+            ResultContextInterface::class,
+            $finalHandler->handled->getAttribute(ResultContextInterface::class)
+        );
     }
 
     public function testHandleResolvesClassStringsViaResolver(): void
@@ -63,24 +74,28 @@ final class MiddlewarePipelineTest extends TestCase
         $response = $this->createMock(ResponseInterface::class);
         $request = $this->createMock(ServerRequestInterface::class);
 
-        $finalHandler = new class($response) implements RequestHandlerInterface {
+        $finalHandler = new class ($response) implements RequestHandlerInterface {
             public function __construct(private ResponseInterface $response)
             {
             }
 
+            #[\Override]
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 return $this->response;
             }
         };
 
-        $middleware = new class($this) implements MiddlewareInterface {
+        $middleware = new class ($this) implements MiddlewareInterface {
             public function __construct(private TestCase $testCase)
             {
             }
 
-            public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-            {
+            #[\Override]
+            public function process(
+                ServerRequestInterface $request,
+                RequestHandlerInterface $handler
+            ): ResponseInterface {
                 $this->testCase->assertInstanceOf(ServerRequestInterface::class, $request);
                 return $handler->handle($request);
             }
@@ -89,11 +104,11 @@ final class MiddlewarePipelineTest extends TestCase
         $resolver = $this->createMock(MiddlewareResolverInterface::class);
         $resolver->expects(self::once())
             ->method('resolve')
-            ->with('middleware.stub')
+            ->with(StubMiddleware::class)
             ->willReturn($middleware);
 
         $pipeline = new MiddlewarePipeline(
-            middleware: ['middleware.stub'],
+            middleware: [StubMiddleware::class],
             resolver: $resolver,
             logger: new NullLogger(),
             finalHandler: $finalHandler,

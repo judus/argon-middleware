@@ -19,14 +19,15 @@ final readonly class MiddlewareDispatcher implements RequestHandlerInterface
      * @param list<class-string<MiddlewareInterface>|MiddlewareInterface> $middleware
      */
     public function __construct(
-        private array                       $middleware,
+        private array $middleware,
         private MiddlewareResolverInterface $resolver,
-        private ?RequestHandlerInterface    $finalHandler,
-        private LoggerInterface             $logger,
-        private int                         $verbosity = MiddlewareVerbosity::NORMAL,
+        private ?RequestHandlerInterface $finalHandler,
+        private LoggerInterface $logger,
+        private int $verbosity = MiddlewareVerbosity::NORMAL,
     ) {
     }
 
+    #[\Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         return $this->dispatch(0, $request);
@@ -65,13 +66,14 @@ final readonly class MiddlewareDispatcher implements RequestHandlerInterface
             $this->logger->info('Executing middleware', ['middleware' => $middleware]);
         }
 
-        $nextHandler = new class($this, $index + 1) implements RequestHandlerInterface {
+        $nextHandler = new class ($this, $index + 1) implements RequestHandlerInterface {
             public function __construct(
                 private MiddlewareDispatcher $dispatcher,
                 private int $nextIndex
             ) {
             }
 
+            #[\Override]
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 return $this->dispatcher->dispatch($this->nextIndex, $request);

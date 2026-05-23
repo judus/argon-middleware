@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Maduser\Argon\Middleware\Resolver;
 
 use Maduser\Argon\Middleware\Contracts\MiddlewareResolverInterface;
@@ -13,13 +15,15 @@ final readonly class ContainerMiddlewareResolver implements MiddlewareResolverIn
 {
     public function __construct(
         private ContainerInterface $container
-    ) {}
+    ) {
+    }
 
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws MiddlewareResolverException
      */
+    #[\Override]
     public function resolve(string $class): MiddlewareInterface
     {
         $instance = $this->container->get($class);

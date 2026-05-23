@@ -36,6 +36,7 @@ final class MiddlewarePipeline implements RequestHandlerInterface
         );
     }
 
+    #[\Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         if (!$request->getAttribute(ResultContextInterface::class)) {

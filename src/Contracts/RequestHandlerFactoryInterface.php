@@ -12,6 +12,6 @@ interface RequestHandlerFactoryInterface
 {
     public function create(string $cacheKey = 'http_pipeline'): RequestHandlerInterface;
 
-    /** @param list<class-string|MiddlewareInterface> $middleware */
+    /** @param list<class-string<MiddlewareInterface>|MiddlewareInterface> $middleware */
     public function createFromStack(array $middleware): MiddlewarePipeline;
 }

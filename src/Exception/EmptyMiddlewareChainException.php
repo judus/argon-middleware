@@ -17,4 +17,3 @@ final class EmptyMiddlewareChainException extends RuntimeException
         parent::__construct($message, $code, $previous);
     }
 }
-

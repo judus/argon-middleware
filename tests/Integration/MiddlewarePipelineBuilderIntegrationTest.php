@@ -35,8 +35,9 @@ final class MiddlewarePipelineBuilderIntegrationTest extends TestCase
 
         $finalHandler = new class implements RequestHandlerInterface
         {
-            public $lastRequest = null;
+            public ?ServerRequestInterface $lastRequest = null;
 
+            #[\Override]
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 $this->lastRequest = $request;
@@ -53,7 +54,10 @@ final class MiddlewarePipelineBuilderIntegrationTest extends TestCase
         self::assertInstanceOf(ResponseStub::class, $result);
         self::assertSame(['builder-recording'], $collector->entries());
         self::assertNotNull($finalHandler->lastRequest);
-        self::assertInstanceOf(ResultContextInterface::class, $finalHandler->lastRequest->getAttribute(ResultContextInterface::class));
+        self::assertInstanceOf(
+            ResultContextInterface::class,
+            $finalHandler->lastRequest->getAttribute(ResultContextInterface::class)
+        );
 
         $logMessages = array_map(static fn(array $record) => $record['message'], $logger->records());
         self::assertContains('Final handler invoked', $logMessages);

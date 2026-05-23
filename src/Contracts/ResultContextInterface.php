@@ -28,4 +28,3 @@ interface ResultContextInterface
 
     public function isCallable(): bool;
 }
-

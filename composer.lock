@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6fe9f61c05193f2a2eaaf936bc969f16",
+    "content-hash": "8ccd825c7af64d636bfe3d17fb4b18b0",
     "packages": [
         {
             "name": "maduser/argon",
@@ -12,7 +12,7 @@
             "dist": {
                 "type": "path",
                 "url": "/home/maduser/workspace/argon/packages/maduser-argon",
-                "reference": "34ef90537ca13674d00735b57132b26d62562ae4"
+                "reference": "6a8330822b89401115903e12de31a2e46d3d701e"
             },
             "require": {
                 "nette/php-generator": "^4.2",
@@ -47,13 +47,13 @@
                     "vendor/bin/phpunit"
                 ],
                 "test:coverage": [
-                    "vendor/bin/phpunit  --coverage-clover=coverage.xml --coverage-html coverage-report && open coverage-report/index.html"
+                    "vendor/bin/phpunit --coverage-clover=coverage.xml --coverage-html coverage-report"
                 ],
                 "phpcs": [
                     "vendor/bin/phpcs --standard=phpcs.xml"
                 ],
                 "psalm": [
-                    "vendor/bin/psalm --output-format=github"
+                    "vendor/bin/psalm --no-cache --output-format=github"
                 ],
                 "phpcs:fix": [
                     "vendor/bin/phpcbf --standard=phpcs.xml"
@@ -61,7 +61,6 @@
                 "check": [
                     "@test",
                     "@psalm",
-                    "@phpcs:fix",
                     "@phpcs"
                 ],
                 "ci": [
@@ -5731,7 +5730,9 @@
     },
     "prefer-stable": true,
     "prefer-lowest": false,
-    "platform": {},
+    "platform": {
+        "php": "^8.2"
+    },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

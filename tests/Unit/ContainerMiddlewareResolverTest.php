@@ -18,8 +18,11 @@ final class ContainerMiddlewareResolverTest extends TestCase
     public function testResolveReturnsMiddlewareFromContainer(): void
     {
         $middleware = new class implements MiddlewareInterface {
-            public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-            {
+            #[\Override]
+            public function process(
+                ServerRequestInterface $request,
+                RequestHandlerInterface $handler
+            ): ResponseInterface {
                 return $handler->handle($request);
             }
         };
@@ -46,7 +49,9 @@ final class ContainerMiddlewareResolverTest extends TestCase
         $resolver = new ContainerMiddlewareResolver($container);
 
         $this->expectException(MiddlewareResolverException::class);
-        $this->expectExceptionMessage("Resolved instance for 'ExampleMiddleware' must implement MiddlewareInterface. Got stdClass.");
+        $this->expectExceptionMessage(
+            "Resolved instance for 'ExampleMiddleware' must implement MiddlewareInterface. Got stdClass."
+        );
 
         $resolver->resolve('ExampleMiddleware');
     }

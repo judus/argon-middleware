@@ -19,6 +19,7 @@ final class TerminalMiddleware implements MiddlewareInterface
     ) {
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $this->collector->record($this->label);

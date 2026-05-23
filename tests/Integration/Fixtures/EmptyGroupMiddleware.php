@@ -18,6 +18,7 @@ final class EmptyGroupMiddleware implements MiddlewareInterface
         $this->delegate = new RecordingMiddleware($collector, 'empty-group');
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         return $this->delegate->process($request, $handler);

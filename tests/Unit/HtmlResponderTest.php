@@ -7,7 +7,7 @@ namespace Tests\Unit;
 use Maduser\Argon\Middleware\Contracts\ResultContextInterface;
 use Maduser\Argon\Middleware\Middleware\HtmlResponder;
 use Maduser\Argon\Middleware\ResultContext;
-use Maduser\Argon\Middleware\Support\Html;
+use Maduser\Argon\Support\Helper\Html;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;

@@ -24,6 +24,7 @@ final class RequestHandlerFactoryTest extends TestCase
         $this->expectException(RequestHandlerFactoryException::class);
         $this->expectExceptionMessage('Middleware must be class-string or instance of MiddlewareInterface. Got int.');
 
+        /** @psalm-suppress InvalidArgument Testing runtime validation for invalid middleware entries. */
         $factory->createFromStack([123]);
     }
 }

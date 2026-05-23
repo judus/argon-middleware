@@ -20,6 +20,7 @@ final class StaticMiddlewareLoader implements MiddlewareLoaderInterface
         $this->grouped = $grouped;
     }
 
+    #[\Override]
     public function loadGrouped(): array
     {
         return $this->grouped;

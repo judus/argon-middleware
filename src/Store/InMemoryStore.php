@@ -15,7 +15,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class InMemoryStore implements PipelineStoreInterface
+final class InMemoryStore implements PipelineStoreInterface
 {
     /** @var array<string, MiddlewareStackInterface> */
     private array $stacks = [];
@@ -33,6 +33,7 @@ class InMemoryStore implements PipelineStoreInterface
         $this->logger = $logger ?? new NullLogger();
     }
 
+    #[\Override]
     public function get(MiddlewareStackInterface|string $keyOrStack): RequestHandlerInterface
     {
         if ($keyOrStack instanceof MiddlewareStackInterface) {
@@ -53,6 +54,7 @@ class InMemoryStore implements PipelineStoreInterface
         );
     }
 
+    #[\Override]
     public function register(MiddlewareStackInterface $stack): PipelineStoreInterface
     {
         $this->stacks[$stack->getId()] = $stack;

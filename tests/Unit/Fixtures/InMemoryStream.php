@@ -20,11 +20,13 @@ final class InMemoryStream implements StreamInterface
         return $this->contents;
     }
 
+    #[\Override]
     public function close(): void
     {
         $this->detach();
     }
 
+    #[\Override]
     public function detach()
     {
         $this->contents = '';
@@ -32,39 +34,44 @@ final class InMemoryStream implements StreamInterface
         return null;
     }
 
+    #[\Override]
     public function getSize(): ?int
     {
         return strlen($this->contents);
     }
 
+    #[\Override]
     public function tell(): int
     {
         return $this->position;
     }
 
+    #[\Override]
     public function eof(): bool
     {
         return $this->position >= strlen($this->contents);
     }
 
+    #[\Override]
     public function isSeekable(): bool
     {
         return true;
     }
 
-    public function seek($offset, $whence = SEEK_SET): void
+    #[\Override]
+    public function seek(int $offset, int $whence = SEEK_SET): void
     {
         $length = strlen($this->contents);
 
         switch ($whence) {
             case SEEK_SET:
-                $target = (int) $offset;
+                $target = $offset;
                 break;
             case SEEK_CUR:
-                $target = $this->position + (int) $offset;
+                $target = $this->position + $offset;
                 break;
             case SEEK_END:
-                $target = $length + (int) $offset;
+                $target = $length + $offset;
                 break;
             default:
                 throw new BadMethodCallException('Invalid whence value.');
@@ -77,19 +84,21 @@ final class InMemoryStream implements StreamInterface
         $this->position = $target;
     }
 
+    #[\Override]
     public function rewind(): void
     {
         $this->position = 0;
     }
 
+    #[\Override]
     public function isWritable(): bool
     {
         return true;
     }
 
-    public function write($string): int
+    #[\Override]
+    public function write(string $string): int
     {
-        $string = (string) $string;
         $before = substr($this->contents, 0, $this->position);
         $after = substr($this->contents, $this->position + strlen($string));
         $this->contents = $before . $string . $after;
@@ -97,19 +106,21 @@ final class InMemoryStream implements StreamInterface
         return strlen($string);
     }
 
+    #[\Override]
     public function isReadable(): bool
     {
         return true;
     }
 
-    public function read($length): string
+    #[\Override]
+    public function read(int $length): string
     {
-        $length = (int) $length;
         $chunk = substr($this->contents, $this->position, $length);
         $this->position += strlen($chunk);
         return $chunk;
     }
 
+    #[\Override]
     public function getContents(): string
     {
         $contents = substr($this->contents, $this->position);
@@ -117,7 +128,8 @@ final class InMemoryStream implements StreamInterface
         return $contents;
     }
 
-    public function getMetadata($key = null)
+    #[\Override]
+    public function getMetadata(?string $key = null): mixed
     {
         $meta = ['uri' => 'in-memory'];
         return $key === null ? $meta : ($meta[$key] ?? null);

@@ -20,48 +20,58 @@ final class CollectingLogger implements LoggerInterface
         return $this->records;
     }
 
+    #[\Override]
     public function emergency(Stringable|string $message, array $context = []): void
     {
         $this->log('emergency', $message, $context);
     }
 
+    #[\Override]
     public function alert(Stringable|string $message, array $context = []): void
     {
         $this->log('alert', $message, $context);
     }
 
+    #[\Override]
     public function critical(Stringable|string $message, array $context = []): void
     {
         $this->log('critical', $message, $context);
     }
 
+    #[\Override]
     public function error(Stringable|string $message, array $context = []): void
     {
         $this->log('error', $message, $context);
     }
 
+    #[\Override]
     public function warning(Stringable|string $message, array $context = []): void
     {
         $this->log('warning', $message, $context);
     }
 
+    #[\Override]
     public function notice(Stringable|string $message, array $context = []): void
     {
         $this->log('notice', $message, $context);
     }
 
+    #[\Override]
     public function info(Stringable|string $message, array $context = []): void
     {
         $this->log('info', $message, $context);
     }
 
+    #[\Override]
     public function debug(Stringable|string $message, array $context = []): void
     {
         $this->log('debug', $message, $context);
     }
 
+    #[\Override]
     public function log($level, Stringable|string $message, array $context = []): void
     {
+        /** @var array<string, mixed> $context */
         $this->records[] = [
             'level' => (string) $level,
             'message' => (string) $message,

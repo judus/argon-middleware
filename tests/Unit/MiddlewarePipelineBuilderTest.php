@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit;
 
 use Maduser\Argon\Middleware\Contracts\MiddlewareResolverInterface;
-use Maduser\Argon\Middleware\Exception\MiddlewareException;
 use Maduser\Argon\Middleware\Exception\MiddlewarePipelineException;
 use Maduser\Argon\Middleware\MiddlewarePipelineBuilder;
 use Maduser\Argon\Middleware\MiddlewareVerbosity;
@@ -15,14 +14,18 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\NullLogger;
+use Tests\Unit\Fixtures\TestMiddleware;
 
 final class MiddlewarePipelineBuilderTest extends TestCase
 {
     public function testBuildInvokesResolverAndCreatesPipeline(): void
     {
         $middleware = new class implements MiddlewareInterface {
-            public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-            {
+            #[\Override]
+            public function process(
+                ServerRequestInterface $request,
+                RequestHandlerInterface $handler
+            ): ResponseInterface {
                 return $handler->handle($request);
             }
         };
@@ -35,11 +38,12 @@ final class MiddlewarePipelineBuilderTest extends TestCase
 
         $response = $this->createMock(ResponseInterface::class);
 
-        $finalHandler = new class($response) implements RequestHandlerInterface {
+        $finalHandler = new class ($response) implements RequestHandlerInterface {
             public function __construct(private ResponseInterface $response)
             {
             }
 
+            #[\Override]
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 return $this->response;
@@ -65,7 +69,9 @@ final class MiddlewarePipelineBuilderTest extends TestCase
         );
 
         $this->expectException(MiddlewarePipelineException::class);
-        $this->expectExceptionMessage("Alias 'foo' must map to a class implementing MiddlewareInterface. Got stdClass.");
+        $this->expectExceptionMessage(
+            "Alias 'foo' must map to a class implementing MiddlewareInterface. Got stdClass."
+        );
 
         $builder->registerAlias('foo', \stdClass::class);
     }
@@ -153,13 +159,5 @@ final class MiddlewarePipelineBuilderTest extends TestCase
         $this->expectExceptionMessage('Cannot build a pipeline with no middleware.');
 
         $builder->build();
-    }
-}
-
-final class TestMiddleware implements MiddlewareInterface
-{
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {
-        throw new MiddlewareException('This stub should never be called directly.');
     }
 }

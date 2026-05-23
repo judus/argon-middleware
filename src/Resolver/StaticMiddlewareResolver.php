@@ -27,6 +27,7 @@ final class StaticMiddlewareResolver implements MiddlewareResolverInterface
     /**
      * @throws MiddlewareResolverException
      */
+    #[\Override]
     public function resolve(string $class): MiddlewareInterface
     {
         if (!isset($this->instances[$class])) {

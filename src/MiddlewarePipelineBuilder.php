@@ -49,20 +49,23 @@ final class MiddlewarePipelineBuilder
         return $this;
     }
 
-    /** @param list<string> $middlewareNames */
+    /** @param list<mixed> $middlewareNames */
     public function registerGroup(string $groupName, array $middlewareNames): self
     {
         if (isset($this->groups[$groupName])) {
             throw MiddlewarePipelineException::groupAlreadyDefined($groupName);
         }
 
+        $names = [];
         foreach ($middlewareNames as $name) {
             if (!is_string($name)) {
                 throw MiddlewarePipelineException::groupContainsNonString($groupName, $name);
             }
+
+            $names[] = $name;
         }
 
-        $this->groups[$groupName] = $middlewareNames;
+        $this->groups[$groupName] = $names;
         return $this;
     }
 
@@ -76,10 +79,10 @@ final class MiddlewarePipelineBuilder
     public function removeMiddleware(string $middlewareAliasOrClass): self
     {
         $class = $this->resolveAlias($middlewareAliasOrClass);
-        $this->definitions = array_filter(
+        $this->definitions = array_values(array_filter(
             $this->definitions,
             fn(MiddlewareDefinition $def) => $def->class !== $class
-        );
+        ));
         return $this;
     }
 
@@ -102,7 +105,10 @@ final class MiddlewarePipelineBuilder
             throw MiddlewarePipelineException::emptyPipeline();
         }
 
-        usort($this->definitions, static fn($a, $b) => $b->priority <=> $a->priority);
+        usort(
+            $this->definitions,
+            static fn(MiddlewareDefinition $a, MiddlewareDefinition $b): int => $b->priority <=> $a->priority
+        );
 
         return new MiddlewarePipeline(
             middleware: array_map(
@@ -116,8 +122,17 @@ final class MiddlewarePipelineBuilder
         );
     }
 
+    /**
+     * @return class-string<MiddlewareInterface>
+     */
     private function resolveAlias(string $name): string
     {
-        return $this->aliases[$name] ?? $name;
+        $class = $this->aliases[$name] ?? $name;
+
+        if (!is_subclass_of($class, MiddlewareInterface::class)) {
+            throw MiddlewarePipelineException::aliasMustImplement($name, $class);
+        }
+
+        return $class;
     }
 }

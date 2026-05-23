@@ -7,18 +7,18 @@ namespace Tests\Unit;
 use Maduser\Argon\Middleware\Exception\MiddlewareResolverException;
 use Maduser\Argon\Middleware\Resolver\StaticMiddlewareResolver;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
-use Psr\Http\Server\RequestHandlerInterface;
+use Tests\Unit\Fixtures\StubMiddleware;
 
 final class StaticMiddlewareResolverTest extends TestCase
 {
     public function testConstructorRejectsNonMiddlewareInstances(): void
     {
         $this->expectException(MiddlewareResolverException::class);
-        $this->expectExceptionMessage("Resolved instance for 'stdClass' must implement MiddlewareInterface. Got stdClass.");
+        $this->expectExceptionMessage(
+            "Resolved instance for 'stdClass' must implement MiddlewareInterface. Got stdClass."
+        );
 
+        /** @psalm-suppress InvalidArgument Testing runtime validation for invalid resolver entries. */
         new StaticMiddlewareResolver([
             \stdClass::class => new \stdClass(),
         ]);
@@ -29,16 +29,20 @@ final class StaticMiddlewareResolverTest extends TestCase
         $resolver = new StaticMiddlewareResolver([]);
 
         $this->expectException(MiddlewareResolverException::class);
-        $this->expectExceptionMessage("No middleware registered for class 'Tests\\Unit\\StubMiddleware'.");
+        $this->expectExceptionMessage(
+            "No middleware registered for class 'Tests\\Unit\\Fixtures\\StubMiddleware'."
+        );
 
         $resolver->resolve(StubMiddleware::class);
     }
-}
 
-final class StubMiddleware implements MiddlewareInterface
-{
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    public function testResolveReturnsRegisteredMiddleware(): void
     {
-        return $handler->handle($request);
+        $middleware = new StubMiddleware();
+        $resolver = new StaticMiddlewareResolver([
+            StubMiddleware::class => $middleware,
+        ]);
+
+        self::assertSame($middleware, $resolver->resolve(StubMiddleware::class));
     }
 }

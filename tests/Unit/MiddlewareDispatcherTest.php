@@ -16,6 +16,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Tests\Unit\Fixtures\StubMiddleware;
 
 final class MiddlewareDispatcherTest extends TestCase
 {
@@ -52,7 +53,7 @@ final class MiddlewareDispatcherTest extends TestCase
         $response = $this->createMock(ResponseInterface::class);
         $request = $this->createMock(ServerRequestInterface::class);
 
-        $finalHandler = new class($response, $this, $request) implements RequestHandlerInterface {
+        $finalHandler = new class ($response, $this, $request) implements RequestHandlerInterface {
             public function __construct(
                 private ResponseInterface $response,
                 private TestCase $testCase,
@@ -60,6 +61,7 @@ final class MiddlewareDispatcherTest extends TestCase
             ) {
             }
 
+            #[\Override]
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 $this->testCase->assertSame($this->expectedRequest, $request);
@@ -67,15 +69,18 @@ final class MiddlewareDispatcherTest extends TestCase
             }
         };
 
-        $middleware = new class($this, $request) implements MiddlewareInterface {
+        $middleware = new class ($this, $request) implements MiddlewareInterface {
             public function __construct(
                 private TestCase $testCase,
                 private ServerRequestInterface $expectedRequest
             ) {
             }
 
-            public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-            {
+            #[\Override]
+            public function process(
+                ServerRequestInterface $request,
+                RequestHandlerInterface $handler
+            ): ResponseInterface {
                 $this->testCase->assertSame($this->expectedRequest, $request);
                 return $handler->handle($request);
             }
@@ -84,7 +89,7 @@ final class MiddlewareDispatcherTest extends TestCase
         $resolver = $this->createMock(MiddlewareResolverInterface::class);
         $resolver->expects(self::once())
             ->method('resolve')
-            ->with('stub')
+            ->with(StubMiddleware::class)
             ->willReturn($middleware);
 
         $logger = $this->createMock(LoggerInterface::class);
@@ -93,7 +98,7 @@ final class MiddlewareDispatcherTest extends TestCase
             ->with('Executing middleware', ['middleware' => $middleware]);
 
         $dispatcher = new MiddlewareDispatcher(
-            middleware: ['stub'],
+            middleware: [StubMiddleware::class],
             resolver: $resolver,
             finalHandler: $finalHandler,
             logger: $logger,
@@ -106,6 +111,7 @@ final class MiddlewareDispatcherTest extends TestCase
     public function testHandleThrowsForInvalidMiddlewareEntry(): void
     {
         $resolver = $this->createMock(MiddlewareResolverInterface::class);
+        /** @psalm-suppress InvalidArgument Testing runtime validation for invalid middleware entries. */
         $dispatcher = new MiddlewareDispatcher(
             middleware: [123],
             resolver: $resolver,
@@ -115,7 +121,9 @@ final class MiddlewareDispatcherTest extends TestCase
         );
 
         $this->expectException(MiddlewareDispatcherException::class);
-        $this->expectExceptionMessage('Invalid middleware entry at index 0. Expected class-string or MiddlewareInterface, got int.');
+        $this->expectExceptionMessage(
+            'Invalid middleware entry at index 0. Expected class-string or MiddlewareInterface, got int.'
+        );
 
         $dispatcher->handle($this->createMock(ServerRequestInterface::class));
     }

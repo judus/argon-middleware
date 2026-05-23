@@ -27,6 +27,7 @@ final readonly class ContainerStore implements PipelineStoreInterface
      * @throws ContainerException
      * @throws NotFoundException
      */
+    #[\Override]
     public function get(MiddlewareStackInterface|string $keyOrStack): RequestHandlerInterface
     {
         $pipelineId = is_string($keyOrStack)
@@ -45,6 +46,7 @@ final readonly class ContainerStore implements PipelineStoreInterface
     /**
      * @throws ContainerException
      */
+    #[\Override]
     public function register(MiddlewareStackInterface $stack): self
     {
         $pipelineId = $stack->getId();

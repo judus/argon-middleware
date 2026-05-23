@@ -7,10 +7,11 @@ namespace Tests\Unit;
 use Maduser\Argon\Middleware\Contracts\Middleware\DispatcherInterface;
 use Maduser\Argon\Middleware\Contracts\ResultContextInterface;
 use Maduser\Argon\Middleware\Middleware\Dispatcher;
-use Maduser\Argon\Middleware\Support\Html;
+use Maduser\Argon\Support\Helper\Html;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -34,13 +35,14 @@ final class DispatcherMiddlewareTest extends TestCase
         $captured = null;
         $handler->expects(self::once())
             ->method('handle')
-            ->willReturnCallback(function ($incoming) use (&$captured, $response) {
+            ->willReturnCallback(function (ServerRequestInterface $incoming) use (&$captured, $response) {
                 $captured = $incoming;
                 return $response;
             });
 
         self::assertSame($response, $middleware->process($request, $handler));
 
+        self::assertInstanceOf(ServerRequestInterface::class, $captured);
         self::assertInstanceOf(ResultContextInterface::class, $captured->getAttribute(ResultContextInterface::class));
         $result = $captured->getAttribute(ResultContextInterface::class)->get();
         self::assertInstanceOf(Html::class, $result);

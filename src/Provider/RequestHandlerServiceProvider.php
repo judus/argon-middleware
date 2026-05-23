@@ -25,13 +25,14 @@ use Maduser\Argon\Middleware\ResultContext;
 use Maduser\Argon\Middleware\Store\ContainerStore;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class RequestHandlerServiceProvider extends AbstractServiceProvider
+final class RequestHandlerServiceProvider extends AbstractServiceProvider
 {
     private const DEFAULT_MIDDLEWARE_TAG = 'middleware.http';
 
     /**
      * @throws ContainerException
      */
+    #[\Override]
     public function register(ArgonContainer $container): void
     {
         $container->set(PipelineManager::class, args: [

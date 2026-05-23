@@ -38,7 +38,9 @@ final class ContainerStoreTest extends TestCase
         $store = new ContainerStore($container);
 
         $this->expectException(PipelineStoreException::class);
-        $this->expectExceptionMessage('Container service [pipeline.id] must be a RequestHandlerInterface. Got stdClass.');
+        $this->expectExceptionMessage(
+            'Container service [pipeline.id] must be a RequestHandlerInterface. Got stdClass.'
+        );
 
         $store->getRequestHandler('pipeline.id');
     }

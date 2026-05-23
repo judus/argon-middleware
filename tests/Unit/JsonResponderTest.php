@@ -47,6 +47,7 @@ final class JsonResponderTest extends TestCase
     {
         $factory = new MinimalResponseFactory();
         $payload = new class implements JsonSerializable {
+            #[\Override]
             public function jsonSerialize(): array
             {
                 return ['value' => 42];

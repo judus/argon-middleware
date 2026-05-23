@@ -20,65 +20,76 @@ final class MinimalResponse implements ResponseInterface
     ) {
     }
 
+    #[\Override]
     public function getProtocolVersion(): string
     {
         return $this->protocolVersion;
     }
 
-    public function withProtocolVersion($version): ResponseInterface
+    #[\Override]
+    public function withProtocolVersion(string $version): ResponseInterface
     {
         $clone = clone $this;
-        $clone->protocolVersion = (string) $version;
+        $clone->protocolVersion = $version;
         return $clone;
     }
 
+    #[\Override]
     public function getHeaders(): array
     {
         return $this->headers;
     }
 
-    public function hasHeader($name): bool
+    #[\Override]
+    public function hasHeader(string $name): bool
     {
-        return isset($this->headers[strtolower((string) $name)]);
+        return isset($this->headers[strtolower($name)]);
     }
 
-    public function getHeader($name): array
+    #[\Override]
+    public function getHeader(string $name): array
     {
-        return $this->headers[strtolower((string) $name)] ?? [];
+        return $this->headers[strtolower($name)] ?? [];
     }
 
-    public function getHeaderLine($name): string
+    #[\Override]
+    public function getHeaderLine(string $name): string
     {
         return implode(',', $this->getHeader($name));
     }
 
-    public function withHeader($name, $value): ResponseInterface
+    #[\Override]
+    public function withHeader(string $name, $value): ResponseInterface
     {
         $clone = clone $this;
-        $clone->headers[strtolower((string) $name)] = (array) $value;
+        $clone->headers[strtolower($name)] = $this->normalizeHeaderValues($value);
         return $clone;
     }
 
-    public function withAddedHeader($name, $value): ResponseInterface
+    #[\Override]
+    public function withAddedHeader(string $name, $value): ResponseInterface
     {
         $clone = clone $this;
-        $key = strtolower((string) $name);
-        $clone->headers[$key] = array_merge($clone->headers[$key] ?? [], (array) $value);
+        $key = strtolower($name);
+        $clone->headers[$key] = array_merge($clone->headers[$key] ?? [], $this->normalizeHeaderValues($value));
         return $clone;
     }
 
-    public function withoutHeader($name): ResponseInterface
+    #[\Override]
+    public function withoutHeader(string $name): ResponseInterface
     {
         $clone = clone $this;
-        unset($clone->headers[strtolower((string) $name)]);
+        unset($clone->headers[strtolower($name)]);
         return $clone;
     }
 
+    #[\Override]
     public function getBody(): StreamInterface
     {
         return $this->body;
     }
 
+    #[\Override]
     public function withBody(StreamInterface $body): ResponseInterface
     {
         $clone = clone $this;
@@ -86,21 +97,36 @@ final class MinimalResponse implements ResponseInterface
         return $clone;
     }
 
+    #[\Override]
     public function getStatusCode(): int
     {
         return $this->statusCode;
     }
 
-    public function withStatus($code, $reasonPhrase = ''): ResponseInterface
+    #[\Override]
+    public function withStatus(int $code, string $reasonPhrase = ''): ResponseInterface
     {
         $clone = clone $this;
-        $clone->statusCode = (int) $code;
-        $clone->reasonPhrase = (string) $reasonPhrase;
+        $clone->statusCode = $code;
+        $clone->reasonPhrase = $reasonPhrase;
         return $clone;
     }
 
+    #[\Override]
     public function getReasonPhrase(): string
     {
         return $this->reasonPhrase;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function normalizeHeaderValues(mixed $value): array
+    {
+        if (is_array($value)) {
+            return array_map(static fn(mixed $item): string => (string) $item, array_values($value));
+        }
+
+        return [(string) $value];
     }
 }

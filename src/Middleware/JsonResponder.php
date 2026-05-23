@@ -28,6 +28,7 @@ final readonly class JsonResponder extends AbstractResponder implements JsonResp
     /**
      * @throws JsonException
      */
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $context = $request->getAttribute(ResultContextInterface::class);

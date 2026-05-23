@@ -19,8 +19,10 @@ final readonly class ResponseResponder implements MiddlewareInterface, ResponseR
     ) {
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        /** @psalm-suppress MixedAssignment PSR-7 request attributes are intentionally mixed. */
         $context = $request->getAttribute(ResultContextInterface::class);
 
         if ($context instanceof ResultContextInterface && $context->is(ResponseInterface::class)) {

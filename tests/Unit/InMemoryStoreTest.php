@@ -17,7 +17,7 @@ final class InMemoryStoreTest extends TestCase
         $stack = new MiddlewareStack([]);
         $store = new InMemoryStore();
 
-        $store->register($stack);
+        self::assertSame($store, $store->register($stack));
 
         $handler = $store->get($stack->getId());
 

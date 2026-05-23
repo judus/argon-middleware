@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Integration;
 
 use Maduser\Argon\Middleware\Factory\RequestHandlerFactory;
+use Maduser\Argon\Middleware\Contracts\MiddlewareStackInterface;
 use Maduser\Argon\Middleware\Loader\StaticMiddlewareLoader;
 use Maduser\Argon\Middleware\MiddlewareDefinition;
 use Maduser\Argon\Middleware\Resolver\StaticMiddlewareResolver;
@@ -61,18 +62,20 @@ final class RequestHandlerFactoryIntegrationTest extends TestCase
 
         $resolver = new StaticMiddlewareResolver([]);
 
-        $pipelineManager = new class($handler) implements \Maduser\Argon\Middleware\Contracts\PipelineManagerInterface
+        $pipelineManager = new class ($handler) implements \Maduser\Argon\Middleware\Contracts\PipelineManagerInterface
         {
             public function __construct(private readonly RequestHandlerInterface $handler)
             {
             }
 
-            public function register(\Maduser\Argon\Middleware\Contracts\MiddlewareStackInterface $stack): void
+            #[\Override]
+            public function register(MiddlewareStackInterface $stack): void
             {
                 // No-op for the cache stub.
             }
 
-            public function get(\Maduser\Argon\Middleware\Contracts\MiddlewareStackInterface|string $keyOrStack): RequestHandlerInterface
+            #[\Override]
+            public function get(MiddlewareStackInterface|string $keyOrStack): RequestHandlerInterface
             {
                 return $this->handler;
             }
