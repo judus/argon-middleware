@@ -1,6 +1,8 @@
 {
   "name": "maduser/argon-middleware",
+  "description": "PSR-15 middleware pipeline infrastructure for the Argon runtime stack.",
   "type": "library",
+  "license": "MIT",
   "autoload": {
     "psr-4": {
       "Maduser\\Argon\\Middleware\\": "src/"
@@ -16,16 +18,11 @@
     {
       "type": "path",
       "url": "~/workspace/argon/packages/maduser-argon"
-    },
-    {
-      "type": "path",
-      "url": "~/workspace/argon/packages/maduser-argon-support"
     }
   ],
   "require": {
     "php": "^8.2",
     "maduser/argon": "dev-master",
-    "maduser/argon-support": "dev-master",
     "psr/http-message": "^2.0",
     "psr/http-server-handler": "^1.0",
     "psr/http-server-middleware": "^1.0",

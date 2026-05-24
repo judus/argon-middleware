@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Integration;
 
-use Maduser\Argon\Middleware\Contracts\ResultContextInterface;
 use Maduser\Argon\Middleware\MiddlewarePipelineBuilder;
 use Maduser\Argon\Middleware\MiddlewareVerbosity;
 use Maduser\Argon\Middleware\Resolver\StaticMiddlewareResolver;
@@ -54,10 +53,7 @@ final class MiddlewarePipelineBuilderIntegrationTest extends TestCase
         self::assertInstanceOf(ResponseStub::class, $result);
         self::assertSame(['builder-recording'], $collector->entries());
         self::assertNotNull($finalHandler->lastRequest);
-        self::assertInstanceOf(
-            ResultContextInterface::class,
-            $finalHandler->lastRequest->getAttribute(ResultContextInterface::class)
-        );
+        self::assertSame($incomingRequest, $finalHandler->lastRequest);
 
         $logMessages = array_map(static fn(array $record) => $record['message'], $logger->records());
         self::assertContains('Final handler invoked', $logMessages);

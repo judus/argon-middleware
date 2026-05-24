@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8ccd825c7af64d636bfe3d17fb4b18b0",
+    "content-hash": "a857ce8d79901a0db4d24d21e7cf7457",
     "packages": [
         {
             "name": "maduser/argon",
@@ -80,98 +80,6 @@
                 }
             ],
             "description": "A high-performance, modular, PSR-11 compliant dependency injection container for PHP.",
-            "transport-options": {
-                "relative": false
-            }
-        },
-        {
-            "name": "maduser/argon-support",
-            "version": "dev-master",
-            "dist": {
-                "type": "path",
-                "url": "/home/maduser/workspace/argon/packages/maduser-argon-support",
-                "reference": "3eaa0bbcd37736543e862448d2b89dd293dbb9f3"
-            },
-            "require": {
-                "psr/http-message": "^2.0",
-                "psr/http-server-handler": "^1.0"
-            },
-            "require-dev": {
-                "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
-                "phpunit/phpunit": "^11.5",
-                "slevomat/coding-standard": "^8.24",
-                "squizlabs/php_codesniffer": "^4.0",
-                "vimeo/psalm": "^6.13"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Maduser\\Argon\\Support\\": "src/"
-                },
-                "files": [
-                    "src/polyfills/Override.php"
-                ]
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "phpcs": [
-                    "vendor/bin/phpcs --standard=phpcs.xml"
-                ],
-                "phpcs:fix": [
-                    "vendor/bin/phpcbf --standard=phpcs.xml"
-                ],
-                "psalm": [
-                    "vendor/bin/psalm --output-format=github"
-                ],
-                "psalm:clear": [
-                    "vendor/bin/psalm --clear-cache"
-                ],
-                "test": [
-                    "vendor/bin/phpunit"
-                ],
-                "test:coverage": [
-                    "mkdir -p storage/phpunit/coverage/html && vendor/bin/phpunit --coverage-html storage/phpunit/coverage/html --coverage-clover storage/phpunit/coverage/clover.xml && open storage/phpunit/coverage/html/index.html"
-                ],
-                "ti": [
-                    "vendor/bin/phpunit --testsuite=integration"
-                ],
-                "tu": [
-                    "vendor/bin/phpunit --testsuite=unit"
-                ],
-                "watch": [
-                    "find src/ | entr -r composer check"
-                ],
-                "watch:test": [
-                    "find src/ | entr -r composer test"
-                ],
-                "watch:fix": [
-                    "find src/ | entr -r composer phpcs:fix"
-                ],
-                "check": [
-                    "@test:coverage",
-                    "@psalm",
-                    "@phpcs:fix",
-                    "@phpcs"
-                ],
-                "ci": [
-                    "@test",
-                    "@psalm",
-                    "@phpcs"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Julien Duseyau",
-                    "email": "julien.duseyau@gmail.com"
-                }
-            ],
             "transport-options": {
                 "relative": false
             }
@@ -5725,8 +5633,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "maduser/argon": 20,
-        "maduser/argon-support": 20
+        "maduser/argon": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

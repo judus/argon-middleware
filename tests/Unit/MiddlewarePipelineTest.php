@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit;
 
 use Maduser\Argon\Middleware\Contracts\MiddlewareResolverInterface;
-use Maduser\Argon\Middleware\Contracts\ResultContextInterface;
 use Maduser\Argon\Middleware\MiddlewarePipeline;
 use Maduser\Argon\Middleware\MiddlewareVerbosity;
 use PHPUnit\Framework\TestCase;
@@ -18,7 +17,7 @@ use Tests\Unit\Fixtures\StubMiddleware;
 
 final class MiddlewarePipelineTest extends TestCase
 {
-    public function testHandleSeedsResultContextAndInvokesFinalHandler(): void
+    public function testHandleInvokesFinalHandler(): void
     {
         $response = $this->createMock(ResponseInterface::class);
 
@@ -43,10 +42,6 @@ final class MiddlewarePipelineTest extends TestCase
                 ServerRequestInterface $request,
                 RequestHandlerInterface $handler
             ): ResponseInterface {
-                TestCase::assertInstanceOf(
-                    ResultContextInterface::class,
-                    $request->getAttribute(ResultContextInterface::class)
-                );
                 return $handler->handle($request);
             }
         };
@@ -63,10 +58,7 @@ final class MiddlewarePipelineTest extends TestCase
 
         self::assertSame($response, $pipeline->handle($request));
         self::assertInstanceOf(ServerRequestInterface::class, $finalHandler->handled);
-        self::assertInstanceOf(
-            ResultContextInterface::class,
-            $finalHandler->handled->getAttribute(ResultContextInterface::class)
-        );
+        self::assertSame($request, $finalHandler->handled);
     }
 
     public function testHandleResolvesClassStringsViaResolver(): void

@@ -34,15 +34,5 @@
                 <directory name="tests"/>
             </errorLevel>
         </PropertyNotSetInConstructor>
-        <MixedAssignment>
-            <errorLevel type="suppress">
-                <directory name="tests"/>
-            </errorLevel>
-        </MixedAssignment>
-        <MixedMethodCall>
-            <errorLevel type="suppress">
-                <directory name="tests"/>
-            </errorLevel>
-        </MixedMethodCall>
     </issueHandlers>
 </psalm>

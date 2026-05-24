@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Maduser\Argon\Middleware;
 
 use Maduser\Argon\Middleware\Contracts\MiddlewareResolverInterface;
-use Maduser\Argon\Middleware\Contracts\ResultContextInterface;
-use Maduser\Argon\Middleware\ResultContext;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -39,13 +37,6 @@ final class MiddlewarePipeline implements RequestHandlerInterface
     #[\Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        if (!$request->getAttribute(ResultContextInterface::class)) {
-            $request = $request->withAttribute(
-                ResultContextInterface::class,
-                new ResultContext()
-            );
-        }
-
         return $this->dispatcher->handle($request);
     }
 }
