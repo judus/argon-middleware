@@ -14,13 +14,6 @@
       "email": "julien.duseyau@gmail.com"
     }
   ],
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/judus/argon-container.git",
-      "no-api": true
-    }
-  ],
   "require": {
     "php": "^8.2",
     "maduser/argon-container": "dev-master",
