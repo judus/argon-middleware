@@ -16,8 +16,9 @@
   ],
   "repositories": [
     {
-      "type": "path",
-      "url": "~/workspace/argon/packages/maduser-argon"
+      "type": "vcs",
+      "url": "https://github.com/judus/argon.git",
+      "no-api": true
     }
   ],
   "require": {
