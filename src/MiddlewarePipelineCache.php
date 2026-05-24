@@ -8,15 +8,18 @@ use Maduser\Argon\Middleware\Contracts\MiddlewarePipelineCacheInterface;
 
 final class MiddlewarePipelineCache implements MiddlewarePipelineCacheInterface
 {
+    /** @var array<string, MiddlewarePipeline> */
+    private array $pipelines = [];
+
     #[\Override]
     public function get(string $key): ?MiddlewarePipeline
     {
-        return null;
+        return $this->pipelines[$key] ?? null;
     }
 
     #[\Override]
     public function set(string $key, MiddlewarePipeline $pipeline): void
     {
-        // TODO: Implement set() method.
+        $this->pipelines[$key] = $pipeline;
     }
 }

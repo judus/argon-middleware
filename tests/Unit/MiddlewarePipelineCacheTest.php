@@ -13,7 +13,7 @@ use Psr\Log\NullLogger;
 
 final class MiddlewarePipelineCacheTest extends TestCase
 {
-    public function testCacheImplementsContract(): void
+    public function testCacheStoresPipelineByKey(): void
     {
         $cache = new MiddlewarePipelineCache();
 
@@ -23,6 +23,20 @@ final class MiddlewarePipelineCacheTest extends TestCase
         $pipeline = new MiddlewarePipeline([], $this->createMock(MiddlewareResolverInterface::class), new NullLogger());
         $cache->set('pipeline', $pipeline);
 
-        self::assertNull($cache->get('pipeline'));
+        self::assertSame($pipeline, $cache->get('pipeline'));
+    }
+
+    public function testCacheOverwritesPipelineForExistingKey(): void
+    {
+        $cache = new MiddlewarePipelineCache();
+        $resolver = $this->createMock(MiddlewareResolverInterface::class);
+
+        $original = new MiddlewarePipeline([], $resolver, new NullLogger());
+        $replacement = new MiddlewarePipeline([], $resolver, new NullLogger());
+
+        $cache->set('pipeline', $original);
+        $cache->set('pipeline', $replacement);
+
+        self::assertSame($replacement, $cache->get('pipeline'));
     }
 }
