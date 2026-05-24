@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "677652fbdd9cf8b80958428580aab027",
+    "content-hash": "9631ab4b5f3e62f0762b51935eb56d99",
     "packages": [
         {
             "name": "maduser/argon-container",
-            "version": "dev-master",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/judus/argon-container.git",
-                "reference": "893d97afa4bf2d9c9433e8d48794f5594c6509d1"
+                "reference": "61e5d8190e0809f50d9972c579a3ee01ca09c1c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/judus/argon-container/zipball/893d97afa4bf2d9c9433e8d48794f5594c6509d1",
-                "reference": "893d97afa4bf2d9c9433e8d48794f5594c6509d1",
+                "url": "https://api.github.com/repos/judus/argon-container/zipball/61e5d8190e0809f50d9972c579a3ee01ca09c1c3",
+                "reference": "61e5d8190e0809f50d9972c579a3ee01ca09c1c3",
                 "shasum": ""
             },
             "require": {
@@ -35,7 +35,6 @@
                 "squizlabs/php_codesniffer": "^4.0",
                 "vimeo/psalm": "^6.13"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "files": [
@@ -58,9 +57,9 @@
             "description": "A high-performance, modular, PSR-11 compliant dependency injection container for PHP.",
             "support": {
                 "issues": "https://github.com/judus/argon-container/issues",
-                "source": "https://github.com/judus/argon-container/tree/master"
+                "source": "https://github.com/judus/argon-container/tree/v1.3.0"
             },
-            "time": "2026-05-24T13:36:45+00:00"
+            "time": "2026-05-24T14:26:31+00:00"
         },
         {
             "name": "nette/php-generator",
@@ -5627,9 +5626,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "maduser/argon-container": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
